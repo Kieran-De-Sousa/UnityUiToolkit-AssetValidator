@@ -1,6 +1,8 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
     <Style src="project://database/Assets/UI/Stylesheets/uss_AssetValidator.uss?fileID=7433441132597879392&amp;guid=1130646a06bbae945ac9faf000dd71d7&amp;type=3#uss_AssetValidator" />
     <ui:Label tabindex="-1" text="Asset Validator" parse-escape-sequences="true" display-tooltip-when-elided="true" name="title" />
-    <ui:VisualElement name="v_selectedAsset" style="flex-grow: 1;" />
-    <ui:Button text="Validate" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_validate" />
+    <ui:VisualElement name="v_selectedAsset" style="flex-grow: 1; color: rgb(255, 255, 255);">
+        <ui:VisualElement name="i_assetPreview" style="flex-grow: 1; align-items: center; justify-content: center; align-self: auto; background-image: none; background-color: rgb(0, 0, 0);" />
+    </ui:VisualElement>
+    <ui:Button text="Validate" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_validate" style="background-color: rgb(234, 255, 47); font-size: 18px; -unity-font-style: bold; color: rgb(0, 0, 0);" />
 </ui:UXML>

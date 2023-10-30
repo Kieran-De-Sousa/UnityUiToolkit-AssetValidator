@@ -6,51 +6,71 @@ using UnityEngine.UIElements;
 
 public class s_AssetValidator : EditorWindow
 {
-    List<Object> selectedAssets = new List<Object>();
-    VisualElement selectedAssetsContainer;
+    List<Object> m_selectedAssets = new List<Object>();
+    VisualElement m_selectedAssetsContainer;
+    VisualElement m_selectedAssetsImage;
 
-    [MenuItem("Tools/Asset Validator")]
+    /// <summary>
+    /// String constants of UI Toolkit
+    /// </summary>
+    private const string MENU_ITEM = "Tools/Asset Validator";
+    private const string WINDOW_NAME = "Asset Validator";
+
+    private const string PATH_UIDOCUMENT = "Assets/UI/UI Documents/uxml_AssetValidator.uxml";
+
+    private const string VE_ASSETCONTAINER = "v_selectedAsset";
+    private const string VE_ASSETPREVIEW = "i_assetPreview";
+    private const string BUTTON_VALIDATE = "b_validate";
+
+    [MenuItem(MENU_ITEM)]
     public static void ShowWindow()
     {
         s_AssetValidator window = GetWindow<s_AssetValidator>();
-        window.titleContent = new GUIContent("Asset Validator");
+        window.titleContent = new GUIContent(WINDOW_NAME);
     }
 
-    void OnEnable()
+    private void OnEnable()
     {
-        VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/UI/UI Documents/uxml_AssetValidator.uxml");
+        VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(PATH_UIDOCUMENT);
         VisualElement root = rootVisualElement;
         visualTree.CloneTree(root);
 
-        selectedAssetsContainer = root.Q<VisualElement>("v_selectedAsset");
+        m_selectedAssetsContainer = root.Q<VisualElement>(VE_ASSETCONTAINER);
+        m_selectedAssetsImage = m_selectedAssetsContainer.Q<VisualElement>(VE_ASSETPREVIEW);
 
-        Button validateButton = root.Q<Button>("b_validate");
+
+        Button validateButton = root.Q<Button>(BUTTON_VALIDATE);
         validateButton.clicked += ValidateTextures;
 
         Selection.selectionChanged += UpdateSelectedAssetsList;
     }
 
-    void UpdateSelectedAssetsList()
+    private void UpdateSelectedAssetsList()
     {
-        selectedAssets.Clear();
-        selectedAssetsContainer.Clear();
+        m_selectedAssets.Clear();
+        m_selectedAssetsContainer.Clear();
 
         foreach (Object asset in Selection.objects)
         {
             if (asset is Texture2D)
             {
-                selectedAssets.Add(asset);
+                m_selectedAssets.Add(asset);
 
+                //TODO: GET PREVIEW IMAGE RENDERING CORRECTLY
+                // Texture2D texture = (Texture2D)asset;
+                // m_selectedAssetsImage.style.backgroundImage = texture;
 
                 Label assetLabel = new Label(asset.name);
-                selectedAssetsContainer.Add(assetLabel);
+                m_selectedAssetsContainer.Add(assetLabel);
             }
+
+            // TODO: OTHER ASSET TYPES
         }
     }
 
-    void ValidateTextures()
+    private void ValidateTextures()
     {
-        foreach (Texture2D texture in selectedAssets)
+        foreach (Texture2D texture in m_selectedAssets)
         {
             if (!IsPowerOfTwo(texture.width) || !IsPowerOfTwo(texture.height))
             {
@@ -60,10 +80,12 @@ public class s_AssetValidator : EditorWindow
             {
                 Debug.Log(texture.name + " is a power of two!");
             }
+
+            // TODO: ADD ADDITIONAL CHECKS HERE (e.g. Size on disk, references, etc.)
         }
     }
 
-    bool IsPowerOfTwo(int x)
+    private bool IsPowerOfTwo(int x)
     {
         return (x & (x - 1)) == 0;
     }
