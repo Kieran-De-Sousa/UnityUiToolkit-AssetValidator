@@ -52,16 +52,17 @@ public class s_AssetValidator : EditorWindow
 
         foreach (Object asset in Selection.objects)
         {
+            // Display a label of the assets name.
+            Label assetLabel = new Label(asset.name);
+            m_selectedAssetsContainer.Add(assetLabel);
+            
+            // Display the selected (or most recently selected) asset's Unity preview image.
+            Texture2D texture = AssetPreview.GetAssetPreview(asset);
+            m_selectedAssetsContainer.style.backgroundImage = texture;
+
             if (asset is Texture2D)
             {
                 m_selectedAssets.Add(asset);
-
-                //TODO: GET PREVIEW IMAGE RENDERING CORRECTLY
-                // Texture2D texture = (Texture2D)asset;
-                // m_selectedAssetsImage.style.backgroundImage = texture;
-
-                Label assetLabel = new Label(asset.name);
-                m_selectedAssetsContainer.Add(assetLabel);
             }
 
             // TODO: OTHER ASSET TYPES
