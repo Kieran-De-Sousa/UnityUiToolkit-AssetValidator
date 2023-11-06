@@ -19,7 +19,7 @@ public class s_AssetValidator : EditorWindow
     private const string PATH_UIDOCUMENT = "Assets/UI/UI Documents/uxml_AssetValidator.uxml";
 
     private const string VE_ASSETCONTAINER = "v_selectedAsset";
-    private const string VE_ASSETPREVIEW = "i_assetPreview";
+    // const string VE_ASSETPREVIEW = "i_assetPreview";
     private const string BUTTON_VALIDATE = "b_validate";
 
     [MenuItem(MENU_ITEM)]
@@ -29,6 +29,9 @@ public class s_AssetValidator : EditorWindow
         window.titleContent = new GUIContent(WINDOW_NAME);
     }
 
+    /// <summary>
+    /// TODO: Code Comment
+    /// </summary>
     private void OnEnable()
     {
         VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(PATH_UIDOCUMENT);
@@ -36,15 +39,18 @@ public class s_AssetValidator : EditorWindow
         visualTree.CloneTree(root);
 
         m_selectedAssetsContainer = root.Q<VisualElement>(VE_ASSETCONTAINER);
-        m_selectedAssetsImage = m_selectedAssetsContainer.Q<VisualElement>(VE_ASSETPREVIEW);
+        //m_selectedAssetsImage = m_selectedAssetsContainer.Q<VisualElement>(VE_ASSETPREVIEW);
 
 
         Button validateButton = root.Q<Button>(BUTTON_VALIDATE);
-        validateButton.clicked += ValidateTextures;
+        validateButton.clicked += ValidateSelection;
 
         Selection.selectionChanged += UpdateSelectedAssetsList;
     }
 
+    /// <summary>
+    /// TODO: Code Comment
+    /// </summary>
     private void UpdateSelectedAssetsList()
     {
         m_selectedAssets.Clear();
@@ -52,16 +58,16 @@ public class s_AssetValidator : EditorWindow
 
         foreach (Object asset in Selection.objects)
         {
-            // Display a label of the assets name.
-            Label assetLabel = new Label(asset.name);
-            m_selectedAssetsContainer.Add(assetLabel);
-            
-            // Display the selected (or most recently selected) asset's Unity preview image.
-            Texture2D texture = AssetPreview.GetAssetPreview(asset);
-            m_selectedAssetsContainer.style.backgroundImage = texture;
-
-            if (asset is Texture2D)
+            if (s_ValidationMethods.IsValidAssetType(asset))
             {
+                // Display a label of the assets name.
+                Label assetLabel = new Label(asset.name);
+                m_selectedAssetsContainer.Add(assetLabel);
+            
+                // Display the selected (or most recently selected) asset's Unity preview image.
+                Texture2D texture = AssetPreview.GetAssetPreview(asset);
+                m_selectedAssetsContainer.style.backgroundImage = texture;
+                
                 m_selectedAssets.Add(asset);
             }
 
@@ -69,8 +75,20 @@ public class s_AssetValidator : EditorWindow
         }
     }
 
-    private void ValidateTextures()
+    /// <summary>
+    /// TODO: Code Comment
+    /// </summary>
+    private void ValidateSelection()
     {
+        // foreach (Object asset in m_selectedAssets)
+        // {
+        //     if (asset is Texture2D)
+        //     {
+        //         
+        //     }
+        //     
+        // }
+        
         foreach (Texture2D texture in m_selectedAssets)
         {
             if (!IsPowerOfTwo(texture.width) || !IsPowerOfTwo(texture.height))
