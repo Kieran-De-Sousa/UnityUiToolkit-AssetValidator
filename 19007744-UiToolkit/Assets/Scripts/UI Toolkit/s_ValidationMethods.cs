@@ -12,6 +12,7 @@ public class s_ValidationMethods
     {
         typeof(Texture2D),
         typeof(AudioClip),
+        typeof(Mesh),
         //TODO: Add more types as necessary
     };
     
