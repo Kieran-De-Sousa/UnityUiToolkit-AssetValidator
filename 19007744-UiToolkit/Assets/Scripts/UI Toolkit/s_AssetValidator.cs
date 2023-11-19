@@ -15,7 +15,8 @@ public class s_AssetValidator : EditorWindow
 {
     List<Object> m_selectedAssets = new List<Object>();
     VisualElement m_selectedAssetsContainer;
-    VisualElement m_selectedAssetsImage;
+    private Label m_selectedAssetName;
+    // VisualElement m_selectedAssetsImage;
 
     private const float ASSET_LOAD_WAIT = 0.1f; // EditorWaitForSeconds value.
 
@@ -28,6 +29,7 @@ public class s_AssetValidator : EditorWindow
     private const string PATH_UIDOCUMENT = "Assets/UI/UI Documents/uxml_AssetValidator.uxml";
 
     private const string VE_ASSETCONTAINER = "v_selectedAsset";
+    private const string LABEL_ASSET_NAME = "l_selectedAssetName";
     // const string VE_ASSETPREVIEW = "i_assetPreview";
     private const string BUTTON_VALIDATE = "b_validate";
 
@@ -48,6 +50,7 @@ public class s_AssetValidator : EditorWindow
         visualTree.CloneTree(root);
 
         m_selectedAssetsContainer = root.Q<VisualElement>(VE_ASSETCONTAINER);
+        m_selectedAssetName = root.Q<Label>(LABEL_ASSET_NAME);
 
         //m_selectedAssetsImage = m_selectedAssetsContainer.Q<VisualElement>(VE_ASSETPREVIEW);
 
@@ -87,8 +90,7 @@ public class s_AssetValidator : EditorWindow
     private void SetPreviewLabel(Object asset)
     {
         // Display a label of the assets name.
-        Label assetLabel = new Label(asset.name);
-        m_selectedAssetsContainer.Add(assetLabel);
+        m_selectedAssetName.text = $"Asset: {asset.name}";
     }
 
     /// <summary>
