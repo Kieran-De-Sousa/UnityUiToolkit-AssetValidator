@@ -18,6 +18,7 @@
     min-width: auto;
     min-height: 50px;
     max-height: 5%;
+    -unity-font-style: bold;
 }
 
 #b_validate {

@@ -37,4 +37,31 @@ public class s_ValidationMethods
                        asset.GetType() + ": Asset type is not in the list of types to check.");
         return false;
     }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="texture">Texture 2D object to validate.</param>
+    /// <returns><c>true</c> if the Texture is a power of two; otherwise, <c>false</c>.</returns>
+    public static bool IsTexturePowerOfTwo(Texture2D texture)
+    {
+        if (!IsPowerOfTwo(texture.width) || !IsPowerOfTwo(texture.height))
+        {
+            Debug.LogError(texture.name + " is not a power of two!");
+            return false;
+        }
+
+        Debug.Log(texture.name + " is a power of two!");
+        return true;
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="x"></param>
+    /// <returns><c>true</c> if the number is a power of two; otherwise, <c>false</c>.</returns>
+    private static bool IsPowerOfTwo(int x)
+    {
+        return (x & (x - 1)) == 0;
+    }
 }

@@ -14,9 +14,13 @@ using Object = UnityEngine.Object;
 public class s_AssetValidator : EditorWindow
 {
     List<Object> m_selectedAssets = new List<Object>();
-    VisualElement m_selectedAssetsContainer;
+
+    /// <summary>
+    ///
+    /// </summary>
+    private VisualElement m_selectedAssetsContainer;
     private Label m_selectedAssetName;
-    // VisualElement m_selectedAssetsImage;
+    private Label m_selectedAssetType;
 
     private const float ASSET_LOAD_WAIT = 0.1f; // EditorWaitForSeconds value.
 
@@ -30,7 +34,7 @@ public class s_AssetValidator : EditorWindow
 
     private const string VE_ASSETCONTAINER = "v_selectedAsset";
     private const string LABEL_ASSET_NAME = "l_selectedAssetName";
-    // const string VE_ASSETPREVIEW = "i_assetPreview";
+    private const string LABEL_ASSET_TYPE = "l_selectedAssetType";
     private const string BUTTON_VALIDATE = "b_validate";
 
     [MenuItem(MENU_ITEM)]
@@ -49,10 +53,11 @@ public class s_AssetValidator : EditorWindow
         VisualElement root = rootVisualElement;
         visualTree.CloneTree(root);
 
+        // Link UXML elements to member variables from Visual tree asset.
         m_selectedAssetsContainer = root.Q<VisualElement>(VE_ASSETCONTAINER);
         m_selectedAssetName = root.Q<Label>(LABEL_ASSET_NAME);
+        m_selectedAssetType = root.Q<Label>(LABEL_ASSET_TYPE);
 
-        //m_selectedAssetsImage = m_selectedAssetsContainer.Q<VisualElement>(VE_ASSETPREVIEW);
 
         Button validateButton = root.Q<Button>(BUTTON_VALIDATE);
         validateButton.clicked += ValidateSelection;
@@ -91,7 +96,9 @@ public class s_AssetValidator : EditorWindow
     {
         // Display a label of the assets name.
         m_selectedAssetName.text = $"Asset: {asset.name}";
+        m_selectedAssetType.text = $"Type: {asset.GetType()}";
     }
+
 
     /// <summary>
     /// Sets the preview image of the asset as the preview image in the <c>window</c> container.
@@ -131,14 +138,7 @@ public class s_AssetValidator : EditorWindow
         
         foreach (Texture2D texture in m_selectedAssets)
         {
-            if (!IsPowerOfTwo(texture.width) || !IsPowerOfTwo(texture.height))
-            {
-                Debug.LogError(texture.name + " is not a power of two!");
-            }
-            else
-            {
-                Debug.Log(texture.name + " is a power of two!");
-            }
+            s_ValidationMethods.IsTexturePowerOfTwo(texture);
 
             // TODO: ADD ADDITIONAL CHECKS HERE (e.g. Size on disk, references, etc.)
         }
