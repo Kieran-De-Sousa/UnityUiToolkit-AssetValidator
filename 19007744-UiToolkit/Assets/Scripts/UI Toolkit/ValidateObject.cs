@@ -58,10 +58,8 @@ namespace AssetValidator
 
                 // Convert max file size unit and value assigned in settings to bytes for comparison
                 long maxSize = maxFileSize * power;
-                Debug.LogError($"Max Size = {maxSize}");
 
                 long fileSize = GetFileSize(AssetDatabase.GetAssetPath(asset));
-                Debug.LogError($"File Size = {fileSize}");
 
                 if (fileSize == -1)
                 {
@@ -114,6 +112,12 @@ namespace AssetValidator
                 return true;
             }
 
+            public static bool IsTextureDimensionsValid(Texture2D texture, Vector2 maxDimensions)
+            {
+
+                return false;
+            }
+
             /// <summary>
             ///
             /// </summary>
@@ -125,11 +129,17 @@ namespace AssetValidator
             }
         }
 
+        /// <summary>
+        ///
+        /// </summary>
         public static class ValidateAudioClip
         {
 
         }
 
+        /// <summary>
+        ///
+        /// </summary>
         public static class ValidateMesh
         {
 

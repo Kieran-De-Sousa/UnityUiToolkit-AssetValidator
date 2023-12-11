@@ -58,6 +58,8 @@ namespace AssetValidator
             public const string OBJECT_SETTINGS = "o_settings";
             public const string BUTTON_VALIDATE = "b_validate";
 
+            public const float ASSET_LOAD_WAIT = 0.1f; // EditorWaitForSeconds value.
+
             // Types that are validated
             public static List<Type> TYPESTOCHECK = new List<Type>
             {
@@ -67,7 +69,7 @@ namespace AssetValidator
                 //TODO: Add more types as necessary.
             };
 
-            public static readonly Dictionary<LogLevel, Color> DEFAULT_LOGCOLOURS = new Dictionary<LogLevel, Color>
+            public static readonly Dictionary<LogLevel, Color> DEFAULT_LOGCOLOURS = new()
             {
                 {LogLevel.INFO, Color.gray},
                 {LogLevel.PASSED, Color.green},
@@ -76,7 +78,7 @@ namespace AssetValidator
             };
 
             public static readonly Dictionary<SizeUnit, long> TO_BYTES =
-                new Dictionary<SizeUnit, long>
+                new()
                 {
                     {SizeUnit.Byte, 1},
                     {SizeUnit.Kilobyte, 1000},

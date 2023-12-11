@@ -20,14 +20,13 @@ public class s_AssetValidator : EditorWindow
     private so_AssetValidationSettings m_settings;
 
     /// <summary>
-    ///
+    /// UXML Elements
     /// </summary>
     private VisualElement m_selectedAssetsContainer;
     private Label m_selectedAssetName;
     private Label m_selectedAssetType;
+    private Button m_validateButton;
     private ObjectField m_assetValidatorSettings;
-
-    private const float ASSET_LOAD_WAIT = 0.1f; // EditorWaitForSeconds value.
 
     [MenuItem(AssetValidator.Constants.Constants.MENU_ITEM)]
     public static void ShowWindow()
@@ -41,23 +40,8 @@ public class s_AssetValidator : EditorWindow
     /// </summary>
     private void OnEnable()
     {
-        VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AssetValidator.Constants.Constants.PATH_UIDOCUMENT);
-        VisualElement root = rootVisualElement;
-        visualTree.CloneTree(root);
-
-        // Link UXML elements to member variables from Visual tree asset.
-        m_selectedAssetsContainer = root.Q<VisualElement>(AssetValidator.Constants.Constants.VE_ASSETCONTAINER);
-        m_selectedAssetName = root.Q<Label>(AssetValidator.Constants.Constants.LABEL_ASSET_NAME);
-        m_selectedAssetType = root.Q<Label>(AssetValidator.Constants.Constants.LABEL_ASSET_TYPE);
-        m_assetValidatorSettings = root.Q<ObjectField>(AssetValidator.Constants.Constants.OBJECT_SETTINGS);
-
-        // Event for getting new object
-        m_assetValidatorSettings.RegisterValueChangedCallback(evt => OnObjectFieldValueChanged(evt.newValue as so_AssetValidationSettings));
-
-        Button validateButton = root.Q<Button>(AssetValidator.Constants.Constants.BUTTON_VALIDATE);
-        validateButton.clicked += ValidateSelection;
-
-        Selection.selectionChanged += UpdateSelectedAssetsList;
+        LinkUXML();
+        LinkEvents();
     }
 
     /// <summary>
@@ -113,7 +97,7 @@ public class s_AssetValidator : EditorWindow
         {
             // If asset preview is not available, wait for ASSET_LOAD_WAIT amount of time before attempting
             // to set the asset preview again. Repeat until successful.
-            yield return new EditorWaitForSeconds(ASSET_LOAD_WAIT);
+            yield return new EditorWaitForSeconds(AssetValidator.Constants.Constants.ASSET_LOAD_WAIT);
         }
     }
 
@@ -122,19 +106,16 @@ public class s_AssetValidator : EditorWindow
     /// </summary>
     private void ValidateSelection()
     {
-        // foreach (Object asset in m_selectedAssets)
-        // {
-        //     if (asset is Texture2D)
-        //     {
-        //         
-        //     }
-        //     
-        // }
+        if (m_settings == null)
+        {
+            Debug.LogError("NO ASSET VALIDATOR SETTINGS HAVE BEEN SET!");
+            return;
+        }
 
         foreach (Object asset in m_selectedAssets)
         {
+            // General / ALL type checks
             bool result = ValidateGeneral.IsFileSizeValid(asset, m_settings._sizeUnit, m_settings._fileSize);
-
             Debug.Log(result ? "Less than file max" : "More than file max");
 
             if (asset is Texture2D texture)
@@ -149,8 +130,38 @@ public class s_AssetValidator : EditorWindow
         m_settings = settings;
 
 
+    /// <summary>
+    ///
+    /// </summary>
     private void LinkUXML()
     {
+        VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AssetValidator.Constants.Constants.PATH_UIDOCUMENT);
+        VisualElement root = rootVisualElement;
+        visualTree.CloneTree(root);
 
+        // Link UXML elements to member variables from Visual tree asset.
+        m_selectedAssetsContainer = root.Q<VisualElement>(AssetValidator.Constants.Constants.VE_ASSETCONTAINER);
+
+        m_selectedAssetName = root.Q<Label>(AssetValidator.Constants.Constants.LABEL_ASSET_NAME);
+
+        m_selectedAssetType = root.Q<Label>(AssetValidator.Constants.Constants.LABEL_ASSET_TYPE);
+
+        m_assetValidatorSettings = root.Q<ObjectField>(AssetValidator.Constants.Constants.OBJECT_SETTINGS);
+
+        m_validateButton = root.Q<Button>(AssetValidator.Constants.Constants.BUTTON_VALIDATE);
+
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    private void LinkEvents()
+    {
+        // Register event for when Asset Validator scriptable object is assigned to Object field in UI Toolkit.
+        m_assetValidatorSettings.RegisterValueChangedCallback(evt => OnObjectFieldValueChanged(evt.newValue as so_AssetValidationSettings));
+
+        m_validateButton.clicked += ValidateSelection;
+
+        Selection.selectionChanged += UpdateSelectedAssetsList;
     }
 }
