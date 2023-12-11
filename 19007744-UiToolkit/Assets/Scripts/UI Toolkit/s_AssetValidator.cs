@@ -11,6 +11,9 @@ using UnityEngine.UIElements;
 
 using Object = UnityEngine.Object;
 
+using AssetValidator;
+using AssetValidator.ValidationMethods;
+
 public class s_AssetValidator : EditorWindow
 {
     List<Object> m_selectedAssets = new List<Object>();
@@ -26,27 +29,11 @@ public class s_AssetValidator : EditorWindow
 
     private const float ASSET_LOAD_WAIT = 0.1f; // EditorWaitForSeconds value.
 
-    /// <summary>
-    /// String constants of UI Toolkit
-    /// </summary>
-    private const string MENU_ITEM = "Tools/Asset Validator/Asset Validator";
-    private const string WINDOW_NAME = "Asset Validator";
-
-    private const string PATH_UIDOCUMENT = "Assets/UI/UI Documents/uxml_AssetValidator.uxml";
-
-    private const string VE_ASSETCONTAINER = "v_selectedAsset";
-    private const string LABEL_ASSET_NAME = "l_selectedAssetName";
-    private const string LABEL_ASSET_TYPE = "l_selectedAssetType";
-
-    private const string OBJECT_SETTINGS = "o_settings";
-
-    private const string BUTTON_VALIDATE = "b_validate";
-
-    [MenuItem(MENU_ITEM)]
+    [MenuItem(AssetValidator.Constants.Constants.MENU_ITEM)]
     public static void ShowWindow()
     {
         s_AssetValidator window = GetWindow<s_AssetValidator>();
-        window.titleContent = new GUIContent(WINDOW_NAME);
+        window.titleContent = new GUIContent(AssetValidator.Constants.Constants.WINDOW_NAME);
     }
 
     /// <summary>
@@ -54,20 +41,20 @@ public class s_AssetValidator : EditorWindow
     /// </summary>
     private void OnEnable()
     {
-        VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(PATH_UIDOCUMENT);
+        VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AssetValidator.Constants.Constants.PATH_UIDOCUMENT);
         VisualElement root = rootVisualElement;
         visualTree.CloneTree(root);
 
         // Link UXML elements to member variables from Visual tree asset.
-        m_selectedAssetsContainer = root.Q<VisualElement>(VE_ASSETCONTAINER);
-        m_selectedAssetName = root.Q<Label>(LABEL_ASSET_NAME);
-        m_selectedAssetType = root.Q<Label>(LABEL_ASSET_TYPE);
-        m_assetValidatorSettings = root.Q<ObjectField>(OBJECT_SETTINGS);
+        m_selectedAssetsContainer = root.Q<VisualElement>(AssetValidator.Constants.Constants.VE_ASSETCONTAINER);
+        m_selectedAssetName = root.Q<Label>(AssetValidator.Constants.Constants.LABEL_ASSET_NAME);
+        m_selectedAssetType = root.Q<Label>(AssetValidator.Constants.Constants.LABEL_ASSET_TYPE);
+        m_assetValidatorSettings = root.Q<ObjectField>(AssetValidator.Constants.Constants.OBJECT_SETTINGS);
 
         // Event for getting new object
-        //m_assetValidatorSettings.RegisterValueChangedCallback(OnObjectFieldValueChanged);
+        m_assetValidatorSettings.RegisterValueChangedCallback(evt => OnObjectFieldValueChanged(evt.newValue as so_AssetValidationSettings));
 
-        Button validateButton = root.Q<Button>(BUTTON_VALIDATE);
+        Button validateButton = root.Q<Button>(AssetValidator.Constants.Constants.BUTTON_VALIDATE);
         validateButton.clicked += ValidateSelection;
 
         Selection.selectionChanged += UpdateSelectedAssetsList;
@@ -83,7 +70,7 @@ public class s_AssetValidator : EditorWindow
 
         foreach (Object asset in Selection.objects)
         {
-            if (s_ValidationMethods.IsValidAssetType(asset))
+            if (ValidateObject.IsValidAssetType(asset))
             {
                 // Sets Asset name in tool window.
                 SetPreviewLabel(asset);
@@ -143,17 +130,24 @@ public class s_AssetValidator : EditorWindow
         //     }
         //     
         // }
-        
-        foreach (Texture2D texture in m_selectedAssets)
-        {
-            s_ValidationMethods.IsTexturePowerOfTwo(texture);
 
-            // TODO: ADD ADDITIONAL CHECKS HERE (e.g. Size on disk, references, etc.)
+        foreach (Object asset in m_selectedAssets)
+        {
+            bool result = ValidateGeneral.IsFileSizeValid(asset, m_settings._sizeUnit, m_settings._fileSize);
+
+            Debug.Log(result ? "Less than file max" : "More than file max");
+
+            if (asset is Texture2D texture)
+            {
+                ValidateTexture2D.IsTexturePowerOfTwo(texture);
+                // TODO: ADD ADDITIONAL CHECKS HERE (e.g. Size on disk, references, etc.)
+            }
         }
     }
 
-    private void OnObjectFieldValueChanged(ChangeEvent<so_AssetValidationSettings> changeEvent) =>
-        m_settings = changeEvent.newValue;
+    private void OnObjectFieldValueChanged(so_AssetValidationSettings settings) =>
+        m_settings = settings;
+
 
     private void LinkUXML()
     {

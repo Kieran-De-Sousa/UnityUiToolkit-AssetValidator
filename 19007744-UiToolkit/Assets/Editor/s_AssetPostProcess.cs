@@ -11,7 +11,7 @@ public class s_AssetPostProcess : AssetPostprocessor
             // Load the imported asset
             Object importedAsset = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
 
-            if (s_ValidationMethods.IsValidAssetType(importedAsset))
+            if (AssetValidator.ValidationMethods.ValidateObject.IsValidAssetType(importedAsset))
             {
                 // Select the imported asset in the Editor
                 Selection.activeObject = importedAsset;
