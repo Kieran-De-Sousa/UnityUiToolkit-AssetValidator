@@ -6,7 +6,7 @@ using Unity.EditorCoroutines.Editor;
 
 using UnityEngine;
 using UnityEditor;
-
+using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
 using Object = UnityEngine.Object;
@@ -14,6 +14,7 @@ using Object = UnityEngine.Object;
 public class s_AssetValidator : EditorWindow
 {
     List<Object> m_selectedAssets = new List<Object>();
+    private so_AssetValidationSettings m_settings;
 
     /// <summary>
     ///
@@ -21,6 +22,7 @@ public class s_AssetValidator : EditorWindow
     private VisualElement m_selectedAssetsContainer;
     private Label m_selectedAssetName;
     private Label m_selectedAssetType;
+    private ObjectField m_assetValidatorSettings;
 
     private const float ASSET_LOAD_WAIT = 0.1f; // EditorWaitForSeconds value.
 
@@ -35,6 +37,9 @@ public class s_AssetValidator : EditorWindow
     private const string VE_ASSETCONTAINER = "v_selectedAsset";
     private const string LABEL_ASSET_NAME = "l_selectedAssetName";
     private const string LABEL_ASSET_TYPE = "l_selectedAssetType";
+
+    private const string OBJECT_SETTINGS = "o_settings";
+
     private const string BUTTON_VALIDATE = "b_validate";
 
     [MenuItem(MENU_ITEM)]
@@ -57,7 +62,10 @@ public class s_AssetValidator : EditorWindow
         m_selectedAssetsContainer = root.Q<VisualElement>(VE_ASSETCONTAINER);
         m_selectedAssetName = root.Q<Label>(LABEL_ASSET_NAME);
         m_selectedAssetType = root.Q<Label>(LABEL_ASSET_TYPE);
+        m_assetValidatorSettings = root.Q<ObjectField>(OBJECT_SETTINGS);
 
+        // Event for getting new object
+        //m_assetValidatorSettings.RegisterValueChangedCallback(OnObjectFieldValueChanged);
 
         Button validateButton = root.Q<Button>(BUTTON_VALIDATE);
         validateButton.clicked += ValidateSelection;
@@ -144,8 +152,11 @@ public class s_AssetValidator : EditorWindow
         }
     }
 
-    private bool IsPowerOfTwo(int x)
+    private void OnObjectFieldValueChanged(ChangeEvent<so_AssetValidationSettings> changeEvent) =>
+        m_settings = changeEvent.newValue;
+
+    private void LinkUXML()
     {
-        return (x & (x - 1)) == 0;
+
     }
 }

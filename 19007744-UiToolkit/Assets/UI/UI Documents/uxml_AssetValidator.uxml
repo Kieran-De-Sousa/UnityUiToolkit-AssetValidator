@@ -8,6 +8,14 @@
             <ui:Label tabindex="-1" text="NO VALID ASSET TYPE SELECTED!" parse-escape-sequences="true" display-tooltip-when-elided="true" name="l_selectedAssetType" style="justify-content: flex-start; align-self: flex-start; -unity-font-style: bold; font-size: 14px; margin-left: 5%; flex-direction: row; align-items: flex-start; -unity-text-align: middle-left; width: auto; height: auto;" />
         </ui:GroupBox>
     </ui:VisualElement>
-    <ui:VisualElement style="flex-grow: 1; height: auto;" />
+    <ui:VisualElement style="flex-grow: 1; height: auto;">
+        <uie:ObjectField label="Asset Validator Settings" name="o_settings" type="so_AssetValidationSettings, Assembly-CSharp" style="-unity-font-style: bold;" />
+        <ui:ScrollView name="s_scrollSettings">
+            <ui:Foldout text="General Settings" name="f_generalSettings" />
+            <ui:Foldout text="Texture2D Settings" name="f_texture2DSettings" value="true" />
+            <ui:Foldout text="AudioClip Settings" name="f_audioClipSettings" />
+            <ui:Foldout text="Mesh Settings" name="f_meshSettings" />
+        </ui:ScrollView>
+    </ui:VisualElement>
     <ui:Button text="Validate" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_validate" style="align-items: center; height: auto; width: auto;" />
 </ui:UXML>
