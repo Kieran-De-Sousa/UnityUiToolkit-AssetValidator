@@ -4,13 +4,16 @@ using System.Collections.Generic;
 using AssetValidator.Settings;
 using UnityEngine;
 
+using Object = UnityEngine.Object;
+
+// Root namespace for all Asset Validator-related utilities.
 namespace AssetValidator
 {
-    //
+    // Sub-namespace for settings-related utilities.
     namespace Settings
     {
         /// <summary>
-        ///
+        /// Defined log level type to be set by a designer when an asset validation fails
         /// </summary>
         public enum LogLevel : int
         {
@@ -22,9 +25,9 @@ namespace AssetValidator
         };
 
         /// <summary>
-        ///
+        /// Defined file size units.
         /// </summary>
-        /// <remarks>Initialised as <c>int</c> instead of <c>long</c> as <c>long</c> is not available to set in the Unity Inspector.</remarks>
+        /// <remarks>Initialised as <c>int</c> instead of <c>long</c> as <c>long</c> is not able to be set in the Unity Inspector.</remarks>
         public enum SizeUnit : int
         {
             None     = 0,
@@ -37,32 +40,49 @@ namespace AssetValidator
         };
 
         /// <summary>
-        ///
+        /// Struct defining settings used for validating Asset file size.
         /// </summary>
+        /// <seealso cref="ValidationMethods.ValidateGeneral.IsFileSizeValid"/>
         [System.Serializable]
-        public struct FileSizeSettings
+        public struct GeneralFileSizeSettings
         {
             public SizeUnit _sizeUnit;
             public long _fileSize;
+
             public LogLevel _logLevel;
+            [HideInInspector] public bool _result;
         }
 
         /// <summary>
-        ///
+        /// Struct defining settings used for validating Texture2D power of two..
         /// </summary>
+        /// <seealso cref="ValidationMethods.ValidateTexture2D.IsTexturePowerOfTwo"/>
+        [System.Serializable]
+        public struct TextureIsPowerOfTwoSettings
+        {
+            public LogLevel _logLevel;
+            [HideInInspector] public bool _result;
+        }
+
+        /// <summary>
+        /// Struct defining settings used for validating Texture2D dimensions.
+        /// </summary>
+        /// <seealso cref="ValidationMethods.ValidateTexture2D.IsTextureDimensionsValid"/>
         [System.Serializable]
         public struct TextureSizeSettings
         {
             public Vector2 _textureSize;
+
             public LogLevel _logLevel;
+            [HideInInspector] public bool _result;
         }
     }
 
-    //
+    // Sub-namespace for constant / readonly values used by Asset Validator
     namespace Constants
     {
         /// <summary>
-        ///
+        /// Static class containing string constants and predefined values used by Asset Validator.
         /// </summary>
         public static class Constants
         {
@@ -84,6 +104,8 @@ namespace AssetValidator
             // Asset Validator validation settings
             public const string OBJECT_SETTINGS = "o_settings";
             public const string SCROLL_SETTINGS = "s_scrollSettings";
+            public const string LABEL_RESULT = "l_result";
+            public const string VE_RESULT = "ve_result";
 
             // General Asset Validator Settings
             public const string FOLDOUT_GENERAL = "f_generalSettings";
@@ -107,6 +129,12 @@ namespace AssetValidator
 
             public const float ASSET_LOAD_WAIT = 0.1f; // EditorWaitForSeconds value.
 
+            // Default colours
+            public static readonly Color DEFAULT_TEXT_COLOUR = new(27,27,27,255);
+            public static readonly Color DISABLED_TEXT_COLOUR = Color.grey;
+            public static readonly Color ENABLED_RESULT_BOX_COLOUR = Color.black;
+            public static readonly Color DISABLED_RESULT_BOX_COLOUR = Color.grey;
+
             // Types that are validated
             public static readonly List<Type> TYPESTOCHECK = new()
             {
@@ -114,6 +142,14 @@ namespace AssetValidator
                 typeof(AudioClip),
                 typeof(Mesh),
                 //TODO: Add more types as necessary.
+            };
+
+            // TODO: See if this implementation is preferred.
+            public static readonly Dictionary<Type, Func<Object, so_AssetValidationSettings, ToggleFields, so_AssetValidationSettings>> TYPEMETHODASSIGNMENT = new()
+            {
+                { typeof(Texture2D), AssetValidator.ValidationMethods.ValidateTexture2D.ValidationTexture2D },
+                { typeof(AudioClip), AssetValidator.ValidationMethods.ValidateAudioClip.ValidationAudioClip },
+                { typeof(Mesh), AssetValidator.ValidationMethods.ValidateMesh.ValidationMesh },
             };
 
             // Dictionary mapping LogLevel enums to specific default Color values

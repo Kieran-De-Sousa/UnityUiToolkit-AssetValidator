@@ -31,6 +31,7 @@ public class s_AssetValidator : EditorWindow
     private ObjectField m_assetValidatorSettings;
 
     private ToggleFields m_toggleValidation;
+    private List<Toggle> m_toggleList = new();
 
     [MenuItem(AssetValidator.Constants.Constants.MENU_ITEM)]
     public static void ShowWindow()
@@ -116,83 +117,23 @@ public class s_AssetValidator : EditorWindow
             return;
         }
 
+        so_AssetValidationSettings results = m_settings;
         foreach (Object asset in m_selectedAssets)
         {
-            // General / ALL type checks
-            ValidationGeneral(asset);
+            results = AssetValidator.ValidationMethods.ValidateGeneral.ValidationGeneral(asset, results,
+                m_toggleValidation);
 
-            // Texture2D type checks
-            if (asset is Texture2D texture)
+            foreach (var type in AssetValidator.Constants.Constants.TYPESTOCHECK)
             {
-                ValidationTexture2D(texture);
-            }
-
-            // AudioClip type checks
-            if (asset is AudioClip audioClip)
-            {
-                ValidationAudioClip(audioClip);
-            }
-
-            // Mesh type checks
-            if (asset is Mesh mesh)
-            {
-                ValidationMesh(mesh);
+                if (type.IsInstanceOfType(asset) &&
+                    AssetValidator.Constants.Constants.TYPEMETHODASSIGNMENT.TryGetValue(type, out var validationMethod))
+                {
+                    results = validationMethod?.Invoke(asset, results, m_toggleValidation);
+                }
             }
         }
-    }
 
-    /// <summary>
-    /// Checks toggled toggles for general asset validation.
-    /// </summary>
-    /// <param name="asset">Asset to be validated.</param>
-    private void ValidationGeneral(Object asset)
-    {
-        if (m_toggleValidation._fileSize.value)
-        {
-            bool result = ValidateGeneral.IsFileSizeValid(asset, m_settings._fileSizeSettings._sizeUnit, m_settings._fileSizeSettings._fileSize);
-            Debug.Log(result ? "Less than file max" : "More than file max");
-        }
-    }
-
-    /// <summary>
-    /// Checks toggled toggles for texture asset validation.
-    /// </summary>
-    /// <param name="texture">Texture asset to be validated.</param>
-    private void ValidationTexture2D(Texture2D texture)
-    {
-        if (m_toggleValidation._isPowerOfTwo.value)
-        {
-            ValidateTexture2D.IsTexturePowerOfTwo(texture);
-        }
-
-        if (m_toggleValidation._textureDimensions.value)
-        {
-            ValidateTexture2D.IsTextureDimensionsValid(texture, m_settings._textureSizeSettings._textureSize);
-        }
-    }
-
-    /// <summary>
-    /// Checks toggled toggles for audio clip asset validation.
-    /// </summary>
-    /// <param name="audioClip">AudioClip asset to be validated.</param>
-    private void ValidationAudioClip(AudioClip audioClip)
-    {
-        if (m_toggleValidation._audioExample.value)
-        {
-            // TODO: Audio validation
-        }
-    }
-
-    /// <summary>
-    /// Checks toggled toggles for mesh asset validation.
-    /// </summary>
-    /// <param name="mesh">Mesh asset to be validated.</param>
-    private void ValidationMesh(Mesh mesh)
-    {
-        if (m_toggleValidation._meshExample.value)
-        {
-            // TODO: Mesh validation
-        }
+        m_settings = results;
     }
 
     /// <summary>
@@ -203,6 +144,34 @@ public class s_AssetValidator : EditorWindow
     private void OnObjectFieldValueChanged(so_AssetValidationSettings settings) =>
         m_settings = settings;
 
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="toggle"></param>
+    /// <param name="isOn"></param>
+    private void OnToggleValueChanged(Toggle toggle, bool isOn)
+    {
+        Label resultLabel = toggle.Q<Label>(AssetValidator.Constants.Constants.LABEL_RESULT);
+        VisualElement resultBox = toggle.Q<VisualElement>(AssetValidator.Constants.Constants.VE_RESULT);
+
+        // Change the color of the label when the Toggle is enabled
+        if (resultLabel != null)
+        {
+            resultLabel.style.color = isOn ?
+                AssetValidator.Constants.Constants.DEFAULT_TEXT_COLOUR :
+                AssetValidator.Constants.Constants.DISABLED_TEXT_COLOUR;
+        }
+
+        // Change the color of the VisualElement when the Toggle is enabled
+        if (resultBox != null)
+        {
+            resultBox.style.backgroundColor = isOn ?
+                AssetValidator.Constants.Constants.ENABLED_RESULT_BOX_COLOUR :
+                // DO ADDITIONAL STYLING HERE
+                AssetValidator.Constants.Constants.DISABLED_RESULT_BOX_COLOUR;
+        }
+    }
 
     /// <summary>
     /// Links UXML elements to member variables / structs.
@@ -220,12 +189,12 @@ public class s_AssetValidator : EditorWindow
 
         m_assetValidatorSettings = root.Q<ObjectField>(AssetValidator.Constants.Constants.OBJECT_SETTINGS);
 
-        // Links toggle elements from visual tree asset to toggle fields struct
-        m_toggleValidation._fileSize = root.Q<Toggle>(AssetValidator.Constants.Constants.T_FILESIZE);
-        m_toggleValidation._isPowerOfTwo = root.Q<Toggle>(AssetValidator.Constants.Constants.T_POWEROFTWO);
-        m_toggleValidation._textureDimensions = root.Q<Toggle>(AssetValidator.Constants.Constants.T_TEXTURE_DIMENSIONS);
-        m_toggleValidation._audioExample = root.Q<Toggle>(AssetValidator.Constants.Constants.T_AUDIOEXAMPLE);
-        m_toggleValidation._meshExample = root.Q<Toggle>(AssetValidator.Constants.Constants.T_MESHEXAMPLE);
+        // Adds toggles to list and links toggle elements from visual tree asset to toggle fields struct
+        m_toggleList.Add(m_toggleValidation._fileSize = root.Q<Toggle>(AssetValidator.Constants.Constants.T_FILESIZE));
+        m_toggleList.Add(m_toggleValidation._isPowerOfTwo = root.Q<Toggle>(AssetValidator.Constants.Constants.T_POWEROFTWO));
+        m_toggleList.Add(m_toggleValidation._textureDimensions = root.Q<Toggle>(AssetValidator.Constants.Constants.T_TEXTURE_DIMENSIONS));
+        m_toggleList.Add(m_toggleValidation._audioExample = root.Q<Toggle>(AssetValidator.Constants.Constants.T_AUDIOEXAMPLE));
+        m_toggleList.Add(m_toggleValidation._meshExample = root.Q<Toggle>(AssetValidator.Constants.Constants.T_MESHEXAMPLE));
 
         m_validateButton = root.Q<Button>(AssetValidator.Constants.Constants.BUTTON_VALIDATE);
 
@@ -239,10 +208,73 @@ public class s_AssetValidator : EditorWindow
         // Register event for when Asset Validator scriptable object is assigned to Object field in UI Toolkit.
         m_assetValidatorSettings.RegisterValueChangedCallback(evt => OnObjectFieldValueChanged(evt.newValue as so_AssetValidationSettings));
 
+        // Registers every toggle's event callback.
+        foreach (Toggle toggle in m_toggleList)
+        {
+            Toggle thisToggle = toggle;
+            toggle.RegisterValueChangedCallback(evt => OnToggleValueChanged(thisToggle, evt.newValue));
+        }
+
         m_validateButton.clicked += ValidateSelection;
 
         Selection.selectionChanged += UpdateSelectedAssetsList;
     }
+
+    // NOTE: OLD IMPLEMENTATION!!!
+
+    // /// <summary>
+    // /// Checks toggled toggles for general asset validation.
+    // /// </summary>
+    // /// <param name="asset">Asset to be validated.</param>
+    // private void ValidationGeneral(Object asset)
+    // {
+    //     if (m_toggleValidation._fileSize.value)
+    //     {
+    //         bool result = ValidateGeneral.IsFileSizeValid(asset, m_settings._generalFileSizeSettings._sizeUnit, m_settings._generalFileSizeSettings._fileSize);
+    //         Debug.Log(result ? "Less than file max" : "More than file max");
+    //     }
+    // }
+    //
+    // /// <summary>
+    // /// Checks toggled toggles for texture asset validation.
+    // /// </summary>
+    // /// <param name="texture">Texture asset to be validated.</param>
+    // private void ValidationTexture2D(Texture2D texture)
+    // {
+    //     if (m_toggleValidation._isPowerOfTwo.value)
+    //     {
+    //         ValidateTexture2D.IsTexturePowerOfTwo(texture);
+    //     }
+    //
+    //     if (m_toggleValidation._textureDimensions.value)
+    //     {
+    //         ValidateTexture2D.IsTextureDimensionsValid(texture, m_settings._textureSizeSettings._textureSize);
+    //     }
+    // }
+    //
+    // /// <summary>
+    // /// Checks toggled toggles for audio clip asset validation.
+    // /// </summary>
+    // /// <param name="audioClip">AudioClip asset to be validated.</param>
+    // private void ValidationAudioClip(AudioClip audioClip)
+    // {
+    //     if (m_toggleValidation._audioExample.value)
+    //     {
+    //         // TODO: Audio validation
+    //     }
+    // }
+    //
+    // /// <summary>
+    // /// Checks toggled toggles for mesh asset validation.
+    // /// </summary>
+    // /// <param name="mesh">Mesh asset to be validated.</param>
+    // private void ValidationMesh(Mesh mesh)
+    // {
+    //     if (m_toggleValidation._meshExample.value)
+    //     {
+    //         // TODO: Mesh validation
+    //     }
+    // }
 }
 
 /// <summary>

@@ -45,13 +45,25 @@ namespace AssetValidator
         /// </summary>
         public static class ValidateGeneral
         {
+            public static so_AssetValidationSettings ValidationGeneral(Object obj, so_AssetValidationSettings settings, ToggleFields toggles)
+            {
+                if (toggles._fileSize.value)
+                {
+                    settings._generalFileSizeSettings._result = IsFileSizeValid(obj,
+                        settings._generalFileSizeSettings._sizeUnit, settings._generalFileSizeSettings._fileSize);
+                }
+
+                return settings;
+            }
             /// <summary>
-            ///
+            /// Check if the file size of the asset is within the specified limit.
             /// </summary>
-            /// <param name="asset">Asset to be validated</param>
-            /// <param name="sizeUnit">Unit of memory (e.g. KB = Kilobyte)</param>
-            /// <param name="maxFileSize">Maximum file size</param>
-            /// <returns></returns>
+            /// <param name="asset">Asset to be validated.</param>
+            /// <param name="sizeUnit">Unit of memory (e.g. KB = Kilobyte).</param>
+            /// <param name="maxFileSize">Maximum file size.</param>
+            /// <returns>
+            /// <c>true</c> if the file size is within the limit; otherwise, <c>false</c>.
+            /// </returns>
             public static bool IsFileSizeValid(Object asset, AssetValidator.Settings.SizeUnit sizeUnit, long maxFileSize)
             {
                 long power = AssetValidator.Constants.Constants.TO_BYTES.GetValueOrDefault(sizeUnit, 1);
@@ -71,10 +83,12 @@ namespace AssetValidator
             }
 
             /// <summary>
-            ///
+            /// Retrieve the file size of the asset.
             /// </summary>
             /// <param name="assetPath">File path to asset</param>
-            /// <returns>File size of asset if can be found; otherwise, <c>-1</c>.</returns>
+            /// <returns>
+            /// File size of asset if can be found; otherwise, <c>-1</c>.
+            /// </returns>
             private static long GetFileSize(string assetPath)
             {
                 if (!string.IsNullOrEmpty(assetPath))
@@ -95,11 +109,30 @@ namespace AssetValidator
         /// </summary>
         public static class ValidateTexture2D
         {
+            public static so_AssetValidationSettings ValidationTexture2D(Object obj, so_AssetValidationSettings settings, ToggleFields toggles)
+            {
+                Texture2D texture = (Texture2D) obj;
+
+                if (toggles._isPowerOfTwo.value)
+                {
+                    settings._textureIsPowerOfTwoSettings._result = IsTexturePowerOfTwo(texture);
+                }
+
+                if (toggles._textureDimensions.value)
+                {
+                    settings._textureSizeSettings._result = IsTextureDimensionsValid(texture, settings._textureSizeSettings._textureSize);
+                }
+
+                return settings;
+            }
+
             /// <summary>
-            ///
+            /// Checks if the dimensions of the Texture2D asset are powers of two.
             /// </summary>
-            /// <param name="texture">Texture 2D object to validate.</param>
-            /// <returns><c>true</c> if the Texture is a power of two; otherwise, <c>false</c>.</returns>
+            /// <param name="texture">Texture2D object to validate.</param>
+            /// <returns>
+            /// <c>true</c> if the Texture is a power of two; otherwise, <c>false</c>.
+            /// </returns>
             public static bool IsTexturePowerOfTwo(Texture2D texture)
             {
                 if (!IsPowerOfTwo(texture.width) || !IsPowerOfTwo(texture.height))
@@ -113,22 +146,25 @@ namespace AssetValidator
             }
 
             /// <summary>
-            ///
+            /// Checks if both dimensions of the Texture2D asset are below the set maximum dimensions.
             /// </summary>
-            /// <param name="texture"></param>
-            /// <param name="maxDimensions"></param>
-            /// <returns><c>true</c> ; otherwise, <c>false</c>.</returns>
+            /// <param name="texture">Texture2D object to validate.</param>
+            /// <param name="maxDimensions">Maximum X and Y dimension size.</param>
+            /// <returns>
+            /// <c>true</c> if both dimensions of texture are below <c>maxDimensions</c>; otherwise, <c>false</c>.
+            /// </returns>
             public static bool IsTextureDimensionsValid(Texture2D texture, Vector2 maxDimensions)
             {
-
-                return false;
+                return texture.width <= maxDimensions.x && texture.height <= maxDimensions.y;
             }
 
             /// <summary>
-            ///
+            /// Checks if a number is a power of two.
             /// </summary>
-            /// <param name="x"></param>
-            /// <returns><c>true</c> if the number is a power of two; otherwise, <c>false</c>.</returns>
+            /// <param name="x">Number to be checked.</param>
+            /// <returns>
+            /// <c>true</c> if the number is a power of two; otherwise, <c>false</c>.
+            /// </returns>
             private static bool IsPowerOfTwo(int x)
             {
                 return (x & (x - 1)) == 0;
@@ -140,7 +176,13 @@ namespace AssetValidator
         /// </summary>
         public static class ValidateAudioClip
         {
+            public static so_AssetValidationSettings ValidationAudioClip(Object obj, so_AssetValidationSettings settings, ToggleFields toggles)
+            {
+                AudioClip audioClip = (AudioClip) obj;
 
+                return settings;
+            }
+            // TODO: Implementations.
         }
 
         /// <summary>
@@ -148,7 +190,13 @@ namespace AssetValidator
         /// </summary>
         public static class ValidateMesh
         {
+            public static so_AssetValidationSettings ValidationMesh(Object obj, so_AssetValidationSettings settings, ToggleFields toggles)
+            {
+                Mesh mesh = (Mesh) obj;
 
+                return settings;
+            }
+            // TODO: Implementations.
         }
     }
 }

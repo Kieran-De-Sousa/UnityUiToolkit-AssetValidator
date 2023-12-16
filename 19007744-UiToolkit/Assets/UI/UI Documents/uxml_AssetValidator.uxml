@@ -12,7 +12,10 @@
         <uie:ObjectField label="Asset Validator Settings" name="o_settings" type="so_AssetValidationSettings, Assembly-CSharp" style="-unity-font-style: bold;" />
         <ui:ScrollView name="s_scrollSettings">
             <ui:Foldout text="General Settings" name="f_generalSettings">
-                <ui:Toggle label="File Size" name="t_fileSize" value="false" focusable="true" />
+                <ui:Toggle label="File Size" name="t_fileSize" value="false" focusable="true">
+                    <ui:Label tabindex="-1" text="Result" parse-escape-sequences="true" display-tooltip-when-elided="true" name="l_result" />
+                    <ui:VisualElement name="ve_result" style="flex-grow: 1; background-color: rgb(0, 0, 0);" />
+                </ui:Toggle>
             </ui:Foldout>
             <ui:Foldout text="Texture2D Settings" name="f_texture2DSettings" value="true">
                 <ui:Toggle label="Is Power of Two?" name="t_powerOfTwo" />
