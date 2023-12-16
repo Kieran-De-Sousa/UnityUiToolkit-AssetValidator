@@ -13,7 +13,7 @@ namespace AssetValidator
     namespace ValidationMethods
     {
         /// <summary>
-        ///
+        /// General validation methods for ensuring valid object selection.
         /// </summary>
         public static class ValidateObject
         {
@@ -41,16 +41,16 @@ namespace AssetValidator
         }
 
         /// <summary>
-        ///
+        /// Validation methods for <c>general</c> assets.
         /// </summary>
         public static class ValidateGeneral
         {
             /// <summary>
             ///
             /// </summary>
-            /// <param name="asset"></param>
-            /// <param name="sizeUnit"></param>
-            /// <param name="maxFileSize"></param>
+            /// <param name="asset">Asset to be validated</param>
+            /// <param name="sizeUnit">Unit of memory (e.g. KB = Kilobyte)</param>
+            /// <param name="maxFileSize">Maximum file size</param>
             /// <returns></returns>
             public static bool IsFileSizeValid(Object asset, AssetValidator.Settings.SizeUnit sizeUnit, long maxFileSize)
             {
@@ -73,8 +73,8 @@ namespace AssetValidator
             /// <summary>
             ///
             /// </summary>
-            /// <param name="assetPath"></param>
-            /// <returns></returns>
+            /// <param name="assetPath">File path to asset</param>
+            /// <returns>File size of asset if can be found; otherwise, <c>-1</c>.</returns>
             private static long GetFileSize(string assetPath)
             {
                 if (!string.IsNullOrEmpty(assetPath))
@@ -91,7 +91,7 @@ namespace AssetValidator
         }
 
         /// <summary>
-        ///
+        /// Validation methods for <c>Texture2D</c> assets.
         /// </summary>
         public static class ValidateTexture2D
         {
@@ -112,6 +112,12 @@ namespace AssetValidator
                 return true;
             }
 
+            /// <summary>
+            ///
+            /// </summary>
+            /// <param name="texture"></param>
+            /// <param name="maxDimensions"></param>
+            /// <returns><c>true</c> ; otherwise, <c>false</c>.</returns>
             public static bool IsTextureDimensionsValid(Texture2D texture, Vector2 maxDimensions)
             {
 
@@ -130,7 +136,7 @@ namespace AssetValidator
         }
 
         /// <summary>
-        ///
+        /// Validation methods for <c>AudioClip</c> assets.
         /// </summary>
         public static class ValidateAudioClip
         {
@@ -138,7 +144,7 @@ namespace AssetValidator
         }
 
         /// <summary>
-        ///
+        /// Validation methods for <c>Mesh</c> assets.
         /// </summary>
         public static class ValidateMesh
         {

@@ -11,10 +11,19 @@
     <ui:VisualElement style="flex-grow: 1; height: auto;">
         <uie:ObjectField label="Asset Validator Settings" name="o_settings" type="so_AssetValidationSettings, Assembly-CSharp" style="-unity-font-style: bold;" />
         <ui:ScrollView name="s_scrollSettings">
-            <ui:Foldout text="General Settings" name="f_generalSettings" />
-            <ui:Foldout text="Texture2D Settings" name="f_texture2DSettings" value="true" />
-            <ui:Foldout text="AudioClip Settings" name="f_audioClipSettings" />
-            <ui:Foldout text="Mesh Settings" name="f_meshSettings" />
+            <ui:Foldout text="General Settings" name="f_generalSettings">
+                <ui:Toggle label="File Size" name="t_fileSize" value="false" focusable="true" />
+            </ui:Foldout>
+            <ui:Foldout text="Texture2D Settings" name="f_texture2DSettings" value="true">
+                <ui:Toggle label="Is Power of Two?" name="t_powerOfTwo" />
+                <ui:Toggle label="Texture Dimensions" name="t_textureDimensions" />
+            </ui:Foldout>
+            <ui:Foldout text="AudioClip Settings" name="f_audioClipSettings">
+                <ui:Toggle label="Audio Example" name="t_audioClip" />
+            </ui:Foldout>
+            <ui:Foldout text="Mesh Settings" name="f_meshSettings">
+                <ui:Toggle label="Mesh Example" name="t_mesh" />
+            </ui:Foldout>
         </ui:ScrollView>
     </ui:VisualElement>
     <ui:Button text="Validate" parse-escape-sequences="true" display-tooltip-when-elided="true" name="b_validate" style="align-items: center; height: auto; width: auto;" />
