@@ -18,14 +18,26 @@
                 </ui:Toggle>
             </ui:Foldout>
             <ui:Foldout text="Texture2D Settings" name="f_texture2DSettings" value="true">
-                <ui:Toggle label="Is Power of Two?" name="t_powerOfTwo" />
-                <ui:Toggle label="Texture Dimensions" name="t_textureDimensions" />
+                <ui:Toggle label="Is Power of Two?" name="t_powerOfTwo">
+                    <ui:Label tabindex="-1" text="Result" parse-escape-sequences="true" display-tooltip-when-elided="true" name="l_result" />
+                    <ui:VisualElement name="ve_result" style="flex-grow: 1; background-color: rgb(0, 0, 0);" />
+                </ui:Toggle>
+                <ui:Toggle label="Texture Dimensions" name="t_textureDimensions">
+                    <ui:Label tabindex="-1" text="Result" parse-escape-sequences="true" display-tooltip-when-elided="true" name="l_result" />
+                    <ui:VisualElement name="ve_result" style="flex-grow: 1; background-color: rgb(0, 0, 0);" />
+                </ui:Toggle>
             </ui:Foldout>
             <ui:Foldout text="AudioClip Settings" name="f_audioClipSettings">
-                <ui:Toggle label="Audio Example" name="t_audioClip" />
+                <ui:Toggle label="Audio Example" name="t_audioClip">
+                    <ui:Label tabindex="-1" text="Result" parse-escape-sequences="true" display-tooltip-when-elided="true" name="l_result" />
+                    <ui:VisualElement name="ve_result" style="flex-grow: 1; background-color: rgb(0, 0, 0);" />
+                </ui:Toggle>
             </ui:Foldout>
             <ui:Foldout text="Mesh Settings" name="f_meshSettings">
-                <ui:Toggle label="Mesh Example" name="t_mesh" />
+                <ui:Toggle label="Mesh Example" name="t_mesh">
+                    <ui:Label tabindex="-1" text="Result" parse-escape-sequences="true" display-tooltip-when-elided="true" name="l_result" />
+                    <ui:VisualElement name="ve_result" style="flex-grow: 1; background-color: rgb(0, 0, 0);" />
+                </ui:Toggle>
             </ui:Foldout>
         </ui:ScrollView>
     </ui:VisualElement>
