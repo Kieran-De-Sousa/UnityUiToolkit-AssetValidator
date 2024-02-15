@@ -40,6 +40,15 @@ namespace AssetValidator
         };
 
         /// <summary>
+        ///
+        /// </summary>
+        public class SettingsBase
+        {
+            public LogLevel _logLevel;
+            [HideInInspector] public bool _result;
+        }
+
+        /// <summary>
         /// Struct defining settings used for validating Asset file size.
         /// </summary>
         /// <seealso cref="ValidationMethods.ValidateGeneral.IsFileSizeValid"/>
