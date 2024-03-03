@@ -31,9 +31,6 @@ public class s_AssetValidator : EditorWindow
     private Button m_validateButton;
     private ObjectField m_assetValidatorSettings;
 
-    private ToggleFields m_toggleValidation;
-    private List<Toggle> m_toggleList = new();
-
     [MenuItem(AssetValidator.Constants.Constants.MENU_ITEM)]
     public static void ShowWindow()
     {
@@ -46,8 +43,17 @@ public class s_AssetValidator : EditorWindow
     /// </summary>
     private void OnEnable()
     {
+        // Instantiate m_settings to avoid Null Reference errors
+        m_settings = ScriptableObject.CreateInstance<so_AssetValidationSettings>();
+
         LinkUXML();
         LinkEvents();
+
+        // Initialise the colours of the visual elements when enabling the validator.
+        foreach (SettingsBase setting in m_settings._settingsList)
+        {
+            UpdateResultsVisuals(setting._uiVisuals._toggle);
+        }
     }
 
     /// <summary>
@@ -121,26 +127,26 @@ public class s_AssetValidator : EditorWindow
         so_AssetValidationSettings results = m_settings;
         foreach (Object asset in m_selectedAssets)
         {
-            results = AssetValidator.ValidationMethods.ValidateGeneral.ValidationGeneral(asset, results,
-                m_toggleValidation);
+            results = AssetValidator.ValidationMethods.ValidateGeneral.ValidationGeneral(asset, results);
 
             foreach (var type in AssetValidator.Constants.Constants.TYPESTOCHECK)
             {
                 if (type.IsInstanceOfType(asset) &&
                     AssetValidator.Constants.Constants.TYPEMETHODASSIGNMENT.TryGetValue(type, out var validationMethod))
                 {
-                    results = validationMethod?.Invoke(asset, results, m_toggleValidation);
+                    results = validationMethod?.Invoke(asset, results);
                 }
             }
         }
 
         m_settings = results;
 
+        // Error check for null
         if (m_settings != null)
         {
             foreach (SettingsBase setting in m_settings._settingsList)
             {
-                // If the toggle was enabled
+                // If the toggle was enabled...
                 if (setting._uiVisuals._toggle.value)
                 {
                     if (setting._result)
@@ -173,10 +179,11 @@ public class s_AssetValidator : EditorWindow
 
 
     /// <summary>
-    ///
+    /// Event handler when a settings toggle value changes.
+    /// Will update Visual Elements associated with toggle based on state.
     /// </summary>
-    /// <param name="toggle"></param>
-    /// <param name="isOn"></param>
+    /// <param name="toggle">Settings toggle whose value changed.</param>
+    /// <param name="isOn">New value of toggle.</param>
     private void OnToggleValueChanged(Toggle toggle, bool isOn)
     {
         Label resultLabel = toggle.Q<Label>(AssetValidator.Constants.Constants.LABEL_RESULT);
@@ -200,6 +207,29 @@ public class s_AssetValidator : EditorWindow
         }
     }
 
+    private void UpdateResultsVisuals(Toggle toggle)
+    {
+        Label resultLabel = toggle.Q<Label>(AssetValidator.Constants.Constants.LABEL_RESULT);
+        VisualElement resultBox = toggle.Q<VisualElement>(AssetValidator.Constants.Constants.VE_RESULT);
+
+        // Change the color of the label when the Toggle is enabled
+        if (resultLabel != null)
+        {
+            resultLabel.style.color = toggle.value ?
+                AssetValidator.Constants.Constants.DEFAULT_TEXT_COLOUR :
+                AssetValidator.Constants.Constants.DISABLED_TEXT_COLOUR;
+        }
+
+        // Change the color of the VisualElement when the Toggle is enabled
+        if (resultBox != null)
+        {
+            resultBox.style.backgroundColor = toggle.value ?
+                AssetValidator.Constants.Constants.ENABLED_RESULT_BOX_COLOUR :
+                // DO ADDITIONAL STYLING HERE
+                AssetValidator.Constants.Constants.DISABLED_RESULT_BOX_COLOUR;
+        }
+    }
+
     /// <summary>
     /// Links UXML elements to member variables / structs.
     /// </summary>
@@ -216,28 +246,19 @@ public class s_AssetValidator : EditorWindow
 
         m_assetValidatorSettings = root.Q<ObjectField>(AssetValidator.Constants.Constants.OBJECT_SETTINGS);
 
-        // Adds toggles to list and links toggle elements from visual tree asset to toggle fields struct
-        m_toggleList.Add(m_toggleValidation._fileSize = root.Q<Toggle>(AssetValidator.Constants.Constants.T_FILESIZE));
-        m_toggleList.Add(m_toggleValidation._isPowerOfTwo = root.Q<Toggle>(AssetValidator.Constants.Constants.T_POWEROFTWO));
-        m_toggleList.Add(m_toggleValidation._textureDimensions = root.Q<Toggle>(AssetValidator.Constants.Constants.T_TEXTURE_DIMENSIONS));
-        m_toggleList.Add(m_toggleValidation._audioExample = root.Q<Toggle>(AssetValidator.Constants.Constants.T_AUDIOEXAMPLE));
-        m_toggleList.Add(m_toggleValidation._meshExample = root.Q<Toggle>(AssetValidator.Constants.Constants.T_MESHEXAMPLE));
+        /*for (int i = 0; i < AssetValidator.Constants.Constants.LIST_T_SETTINGS.Count; ++i)
+        {
+            Debug.Log($"{AssetValidator.Constants.Constants.LIST_T_SETTINGS[i]}");
+        }*/
 
-        /*m_toggleList.Add(m_settings._settingsList[0]._uiVisuals._toggle = root.Q<Toggle>(AssetValidator.Constants.Constants.T_FILESIZE));
-        m_toggleList.Add(m_settings._settingsList[1]._uiVisuals._toggle = root.Q<Toggle>(AssetValidator.Constants.Constants.T_POWEROFTWO));
-        m_toggleList.Add(m_settings._settingsList[2]._uiVisuals._toggle = root.Q<Toggle>(AssetValidator.Constants.Constants.T_TEXTURE_DIMENSIONS));
-        m_toggleList.Add(m_toggleValidation._audioExample = root.Q<Toggle>(AssetValidator.Constants.Constants.T_AUDIOEXAMPLE));
-        m_toggleList.Add(m_toggleValidation._meshExample = root.Q<Toggle>(AssetValidator.Constants.Constants.T_MESHEXAMPLE));*/
-
-        m_settings._settingsList[0]._uiVisuals =
-            AssignResultsVisualElements(root, AssetValidator.Constants.Constants.T_FILESIZE);
-        m_settings._settingsList[1]._uiVisuals =
-            AssignResultsVisualElements(root, AssetValidator.Constants.Constants.T_POWEROFTWO);
-        m_settings._settingsList[2]._uiVisuals =
-            AssignResultsVisualElements(root, AssetValidator.Constants.Constants.T_TEXTURE_DIMENSIONS);
-
-        Debug.Log($"{m_settings._settingsList[0]._uiVisuals._toggle}");
-        Debug.Log($"{m_settings._settingsList[0]._uiVisuals._resultBox}");
+        // Loops through list of settings available, and assigns Toggle and Visual Elements
+        for (int i = 0; i < m_settings._settingsList.Count; ++i)
+        {
+            // Assigned using static string list declared in AssetValidator.Constants.Constants. Update this list with
+            // further strings and the logic should automatically handle this.
+            m_settings._settingsList[i]._uiVisuals =
+                AssignResultsVisualElements(root, AssetValidator.Constants.Constants.LIST_T_SETTINGS[i]);
+        }
 
         m_validateButton = root.Q<Button>(AssetValidator.Constants.Constants.BUTTON_VALIDATE);
 
@@ -262,14 +283,6 @@ public class s_AssetValidator : EditorWindow
         // Register event for when Asset Validator scriptable object is assigned to Object field in UI Toolkit.
         m_assetValidatorSettings.RegisterValueChangedCallback(evt => OnObjectFieldValueChanged(evt.newValue as so_AssetValidationSettings));
 
-        /*// Registers every toggle's event callback.
-        foreach (Toggle toggle in m_toggleList)
-        {
-            Toggle thisToggle = toggle;
-            toggle.RegisterValueChangedCallback(evt => OnToggleValueChanged(thisToggle, evt.newValue));
-        }*/
-
-        // TODO
         // Registers every toggle's event callback.
         foreach (SettingsBase setting in m_settings._settingsList)
         {
@@ -281,85 +294,10 @@ public class s_AssetValidator : EditorWindow
 
         Selection.selectionChanged += UpdateSelectedAssetsList;
     }
-
-    // NOTE: OLD IMPLEMENTATION!!!
-
-    // /// <summary>
-    // /// Checks toggled toggles for general asset validation.
-    // /// </summary>
-    // /// <param name="asset">Asset to be validated.</param>
-    // private void ValidationGeneral(Object asset)
-    // {
-    //     if (m_toggleValidation._fileSize.value)
-    //     {
-    //         bool result = ValidateGeneral.IsFileSizeValid(asset, m_settings._generalFileSizeSettings._sizeUnit, m_settings._generalFileSizeSettings._fileSize);
-    //         Debug.Log(result ? "Less than file max" : "More than file max");
-    //     }
-    // }
-    //
-    // /// <summary>
-    // /// Checks toggled toggles for texture asset validation.
-    // /// </summary>
-    // /// <param name="texture">Texture asset to be validated.</param>
-    // private void ValidationTexture2D(Texture2D texture)
-    // {
-    //     if (m_toggleValidation._isPowerOfTwo.value)
-    //     {
-    //         ValidateTexture2D.IsTexturePowerOfTwo(texture);
-    //     }
-    //
-    //     if (m_toggleValidation._textureDimensions.value)
-    //     {
-    //         ValidateTexture2D.IsTextureDimensionsValid(texture, m_settings._textureSizeSettings._textureSize);
-    //     }
-    // }
-    //
-    // /// <summary>
-    // /// Checks toggled toggles for audio clip asset validation.
-    // /// </summary>
-    // /// <param name="audioClip">AudioClip asset to be validated.</param>
-    // private void ValidationAudioClip(AudioClip audioClip)
-    // {
-    //     if (m_toggleValidation._audioExample.value)
-    //     {
-    //         // TODO: Audio validation
-    //     }
-    // }
-    //
-    // /// <summary>
-    // /// Checks toggled toggles for mesh asset validation.
-    // /// </summary>
-    // /// <param name="mesh">Mesh asset to be validated.</param>
-    // private void ValidationMesh(Mesh mesh)
-    // {
-    //     if (m_toggleValidation._meshExample.value)
-    //     {
-    //         // TODO: Mesh validation
-    //     }
-    // }
 }
 
 /// <summary>
-/// Data struct to group toggle instances
-/// </summary>
-public struct ToggleFields
-{
-    [Header("General Toggles")]
-    public Toggle _fileSize;
-
-    [Header("Texture2D Toggles")]
-    public Toggle _isPowerOfTwo;
-    public Toggle _textureDimensions;
-
-    [Header("AudioClip Toggles")]
-    public Toggle _audioExample;
-
-    [Header("Mesh Toggles")]
-    public Toggle _meshExample;
-}
-
-/// <summary>
-///
+/// Visual Elements that are associated together.
 /// </summary>
 public struct UIVisuals
 {

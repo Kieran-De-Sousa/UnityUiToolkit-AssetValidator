@@ -40,7 +40,7 @@ namespace AssetValidator
         };
 
         /// <summary>
-        ///
+        /// Base class inherited by settings to pass Logging, Result, and UI data.
         /// </summary>
         public class SettingsBase
         {
@@ -50,7 +50,7 @@ namespace AssetValidator
         }
 
         /// <summary>
-        /// Struct defining settings used for validating Asset file size.
+        /// Class defining settings used for validating Asset file size.
         /// </summary>
         /// <seealso cref="ValidationMethods.ValidateGeneral.IsFileSizeValid"/>
         [System.Serializable]
@@ -61,14 +61,14 @@ namespace AssetValidator
         }
 
         /// <summary>
-        /// Struct defining settings used for validating Texture2D power of two..
+        /// Class defining settings used for validating Texture2D power of two..
         /// </summary>
         /// <seealso cref="ValidationMethods.ValidateTexture2D.IsTexturePowerOfTwo"/>
         [System.Serializable]
         public class TextureIsPowerOfTwoSettings : SettingsBase {}
 
         /// <summary>
-        /// Struct defining settings used for validating Texture2D dimensions.
+        /// Class defining settings used for validating Texture2D dimensions.
         /// </summary>
         /// <seealso cref="ValidationMethods.ValidateTexture2D.IsTextureDimensionsValid"/>
         [System.Serializable]
@@ -76,6 +76,18 @@ namespace AssetValidator
         {
             public Vector2 _textureSize;
         }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <seealso cref="ValidationMethods.ValidateAudioClip.IsAudioBelowLength"/>
+        [System.Serializable]
+        public class AudioLengthSettings : SettingsBase
+        {
+            public float _audioClipLength;
+        }
+
+        /// -------------------- ADD MORE SETTINGS HERE -------------------- ///
     }
 
     // Sub-namespace for constant / readonly values used by Asset Validator
@@ -107,6 +119,9 @@ namespace AssetValidator
             public const string LABEL_RESULT = "l_result";
             public const string VE_RESULT = "ve_result";
 
+            // Toggle Names List
+            public static readonly List<string> LIST_T_SETTINGS; // Initialised in constructor...
+
             // General Asset Validator Settings
             public const string FOLDOUT_GENERAL = "f_generalSettings";
             public const string T_FILESIZE = "t_fileSize";
@@ -118,7 +133,7 @@ namespace AssetValidator
 
             // AudioClip Asset Validator Settings
             public const string FOLDOUT_AUDIOCLIP = "f_audioClipSettings";
-            public const string T_AUDIOEXAMPLE = "t_audioClip";
+            public const string T_CLIPLENGTH = "t_clipLength";
 
             // Mesh Asset Validator Settings
             public const string FOLDOUT_MESH = "f_meshSettings";
@@ -145,7 +160,7 @@ namespace AssetValidator
             };
 
             // TODO: See if this implementation is preferred.
-            public static readonly Dictionary<Type, Func<Object, so_AssetValidationSettings, ToggleFields, so_AssetValidationSettings>> TYPEMETHODASSIGNMENT = new()
+            public static readonly Dictionary<Type, Func<Object, so_AssetValidationSettings, so_AssetValidationSettings>> TYPEMETHODASSIGNMENT = new()
             {
                 { typeof(Texture2D), AssetValidator.ValidationMethods.ValidateTexture2D.ValidationTexture2D },
                 { typeof(AudioClip), AssetValidator.ValidationMethods.ValidateAudioClip.ValidationAudioClip },
@@ -171,6 +186,19 @@ namespace AssetValidator
                 {SizeUnit.Terabyte, 1000000000000}, // Terabyte = 1,000,000,000,000 bytes
                 // NOTE: Add more values as necessary.
             };
+
+            static Constants()
+            {
+                LIST_T_SETTINGS = new List<string>
+                {
+                    T_FILESIZE,
+                    T_POWEROFTWO,
+                    T_TEXTURE_DIMENSIONS,
+                    T_CLIPLENGTH,
+                    T_MESHEXAMPLE
+                    // NOTE: Add additional constants here...
+                };
+            }
         }
     }
 }

@@ -31,7 +31,7 @@ public class so_AssetValidationSettings : ScriptableObject
     public TextureSizeSettings _textureSizeSettings = new TextureSizeSettings();
 
     [Header("AudioClip Settings")]
-    public int example1 = default;
+    public AudioLengthSettings _audioLengthSettings = new AudioLengthSettings();
 
     [Header("Mesh Settings")]
     public int example2 = default;
@@ -47,9 +47,14 @@ public class so_AssetValidationSettings : ScriptableObject
         };
 
         // Add derived classes to list of base class.
-        _settingsList.Add(_generalFileSizeSettings);
-        _settingsList.Add(_textureIsPowerOfTwoSettings);
-        _settingsList.Add(_textureSizeSettings);
+        _settingsList.AddRange(new List<SettingsBase>
+        {
+            _generalFileSizeSettings,
+            _textureIsPowerOfTwoSettings,
+            _textureSizeSettings,
+            _audioLengthSettings,
+            // NOTE: Add additional settings here...
+        });
     }
 
     private void OnValidate()

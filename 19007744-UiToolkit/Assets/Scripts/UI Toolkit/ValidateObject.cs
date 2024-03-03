@@ -45,7 +45,7 @@ namespace AssetValidator
         /// </summary>
         public static class ValidateGeneral
         {
-            public static so_AssetValidationSettings ValidationGeneral(Object obj, so_AssetValidationSettings settings, ToggleFields toggles)
+            public static so_AssetValidationSettings ValidationGeneral(Object obj, so_AssetValidationSettings settings)
             {
                 if (settings._generalFileSizeSettings._uiVisuals._toggle.value)
                 {
@@ -109,16 +109,16 @@ namespace AssetValidator
         /// </summary>
         public static class ValidateTexture2D
         {
-            public static so_AssetValidationSettings ValidationTexture2D(Object obj, so_AssetValidationSettings settings, ToggleFields toggles)
+            public static so_AssetValidationSettings ValidationTexture2D(Object obj, so_AssetValidationSettings settings)
             {
                 Texture2D texture = (Texture2D) obj;
 
-                if (toggles._isPowerOfTwo.value)
+                if (settings._textureIsPowerOfTwoSettings._uiVisuals._toggle.value)
                 {
                     settings._textureIsPowerOfTwoSettings._result = IsTexturePowerOfTwo(texture);
                 }
 
-                if (toggles._textureDimensions.value)
+                if (settings._textureSizeSettings._uiVisuals._toggle.value)
                 {
                     settings._textureSizeSettings._result = IsTextureDimensionsValid(texture, settings._textureSizeSettings._textureSize);
                 }
@@ -176,13 +176,28 @@ namespace AssetValidator
         /// </summary>
         public static class ValidateAudioClip
         {
-            public static so_AssetValidationSettings ValidationAudioClip(Object obj, so_AssetValidationSettings settings, ToggleFields toggles)
+            public static so_AssetValidationSettings ValidationAudioClip(Object obj, so_AssetValidationSettings settings)
             {
                 AudioClip audioClip = (AudioClip) obj;
 
+                if (settings._audioLengthSettings._uiVisuals._toggle.value)
+                {
+                    settings._audioLengthSettings._result = IsAudioBelowLength(audioClip, settings._audioLengthSettings._audioClipLength);
+                }
+
                 return settings;
             }
-            // TODO: Implementations.
+
+            /// <summary>
+            /// Checks if an audio clip is below a specified length.
+            /// </summary>
+            /// <param name="audioClip">AudioClip object to validate.</param>
+            /// <param name="clipLength">Maximum audio clip length in seconds.</param>
+            /// <returns><c>true</c> if the audio clip is less than the length; otherwise, <c>false</c></returns>
+            public static bool IsAudioBelowLength(AudioClip audioClip, float clipLength)
+            {
+                return audioClip.length <= clipLength;
+            }
         }
 
         /// <summary>
@@ -190,7 +205,7 @@ namespace AssetValidator
         /// </summary>
         public static class ValidateMesh
         {
-            public static so_AssetValidationSettings ValidationMesh(Object obj, so_AssetValidationSettings settings, ToggleFields toggles)
+            public static so_AssetValidationSettings ValidationMesh(Object obj, so_AssetValidationSettings settings)
             {
                 Mesh mesh = (Mesh) obj;
 
