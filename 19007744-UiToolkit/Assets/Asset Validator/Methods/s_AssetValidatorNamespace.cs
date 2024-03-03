@@ -159,7 +159,6 @@ namespace AssetValidator
                 //TODO: Add more types as necessary.
             };
 
-            // TODO: See if this implementation is preferred.
             public static readonly Dictionary<Type, Func<Object, so_AssetValidationSettings, so_AssetValidationSettings>> TYPEMETHODASSIGNMENT = new()
             {
                 { typeof(Texture2D), AssetValidator.ValidationMethods.ValidateTexture2D.ValidationTexture2D },
