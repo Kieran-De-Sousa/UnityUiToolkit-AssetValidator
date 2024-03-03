@@ -14,6 +14,7 @@ using Object = UnityEngine.Object;
 
 // Asset Validator namespace
 using AssetValidator;
+using AssetValidator.Settings;
 using AssetValidator.ValidationMethods;
 
 public class s_AssetValidator : EditorWindow
@@ -134,6 +135,32 @@ public class s_AssetValidator : EditorWindow
         }
 
         m_settings = results;
+
+        if (m_settings != null)
+        {
+            foreach (SettingsBase setting in m_settings._settingsList)
+            {
+                // If the toggle was enabled
+                if (setting._uiVisuals._toggle.value)
+                {
+                    if (setting._result)
+                    {
+                        setting._uiVisuals._resultBox.style.backgroundColor = m_settings._passed;
+                        setting._uiVisuals._resultLabel.style.color = m_settings._passed;
+                    }
+
+                    else if (!setting._result)
+                    {
+                        if (m_settings._logColours.TryGetValue(setting._logLevel, out Color color))
+                        {
+                            setting._uiVisuals._resultBox.style.backgroundColor = color;
+                            setting._uiVisuals._resultLabel.style.color = color;
+
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -196,8 +223,35 @@ public class s_AssetValidator : EditorWindow
         m_toggleList.Add(m_toggleValidation._audioExample = root.Q<Toggle>(AssetValidator.Constants.Constants.T_AUDIOEXAMPLE));
         m_toggleList.Add(m_toggleValidation._meshExample = root.Q<Toggle>(AssetValidator.Constants.Constants.T_MESHEXAMPLE));
 
+        /*m_toggleList.Add(m_settings._settingsList[0]._uiVisuals._toggle = root.Q<Toggle>(AssetValidator.Constants.Constants.T_FILESIZE));
+        m_toggleList.Add(m_settings._settingsList[1]._uiVisuals._toggle = root.Q<Toggle>(AssetValidator.Constants.Constants.T_POWEROFTWO));
+        m_toggleList.Add(m_settings._settingsList[2]._uiVisuals._toggle = root.Q<Toggle>(AssetValidator.Constants.Constants.T_TEXTURE_DIMENSIONS));
+        m_toggleList.Add(m_toggleValidation._audioExample = root.Q<Toggle>(AssetValidator.Constants.Constants.T_AUDIOEXAMPLE));
+        m_toggleList.Add(m_toggleValidation._meshExample = root.Q<Toggle>(AssetValidator.Constants.Constants.T_MESHEXAMPLE));*/
+
+        m_settings._settingsList[0]._uiVisuals =
+            AssignResultsVisualElements(root, AssetValidator.Constants.Constants.T_FILESIZE);
+        m_settings._settingsList[1]._uiVisuals =
+            AssignResultsVisualElements(root, AssetValidator.Constants.Constants.T_POWEROFTWO);
+        m_settings._settingsList[2]._uiVisuals =
+            AssignResultsVisualElements(root, AssetValidator.Constants.Constants.T_TEXTURE_DIMENSIONS);
+
+        Debug.Log($"{m_settings._settingsList[0]._uiVisuals._toggle}");
+        Debug.Log($"{m_settings._settingsList[0]._uiVisuals._resultBox}");
+
         m_validateButton = root.Q<Button>(AssetValidator.Constants.Constants.BUTTON_VALIDATE);
 
+    }
+
+    private UIVisuals AssignResultsVisualElements(VisualElement root, string toggleName)
+    {
+        UIVisuals uiVisuals = default;
+
+        uiVisuals._toggle = root.Q<Toggle>(toggleName);
+        uiVisuals._resultLabel = uiVisuals._toggle.Q<Label>(AssetValidator.Constants.Constants.LABEL_RESULT);
+        uiVisuals._resultBox = uiVisuals._toggle.Q<VisualElement>(AssetValidator.Constants.Constants.VE_RESULT);
+
+        return uiVisuals;
     }
 
     /// <summary>
@@ -208,11 +262,19 @@ public class s_AssetValidator : EditorWindow
         // Register event for when Asset Validator scriptable object is assigned to Object field in UI Toolkit.
         m_assetValidatorSettings.RegisterValueChangedCallback(evt => OnObjectFieldValueChanged(evt.newValue as so_AssetValidationSettings));
 
-        // Registers every toggle's event callback.
+        /*// Registers every toggle's event callback.
         foreach (Toggle toggle in m_toggleList)
         {
             Toggle thisToggle = toggle;
             toggle.RegisterValueChangedCallback(evt => OnToggleValueChanged(thisToggle, evt.newValue));
+        }*/
+
+        // TODO
+        // Registers every toggle's event callback.
+        foreach (SettingsBase setting in m_settings._settingsList)
+        {
+            Toggle thisToggle = setting._uiVisuals._toggle;
+            setting._uiVisuals._toggle.RegisterValueChangedCallback(evt => OnToggleValueChanged(thisToggle, evt.newValue));
         }
 
         m_validateButton.clicked += ValidateSelection;
@@ -294,4 +356,14 @@ public struct ToggleFields
 
     [Header("Mesh Toggles")]
     public Toggle _meshExample;
+}
+
+/// <summary>
+///
+/// </summary>
+public struct UIVisuals
+{
+    public Toggle _toggle;
+    public VisualElement _resultBox;
+    public Label _resultLabel;
 }

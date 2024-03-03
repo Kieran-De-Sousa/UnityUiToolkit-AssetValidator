@@ -47,7 +47,7 @@ namespace AssetValidator
         {
             public static so_AssetValidationSettings ValidationGeneral(Object obj, so_AssetValidationSettings settings, ToggleFields toggles)
             {
-                if (toggles._fileSize.value)
+                if (settings._generalFileSizeSettings._uiVisuals._toggle.value)
                 {
                     settings._generalFileSizeSettings._result = IsFileSizeValid(obj,
                         settings._generalFileSizeSettings._sizeUnit, settings._generalFileSizeSettings._fileSize);

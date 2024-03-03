@@ -20,12 +20,15 @@ public class so_AssetValidationSettings : ScriptableObject
 
     public Dictionary<LogLevel, Color> _logColours;
 
+    // Settings Base List
+    [HideInInspector] public List<SettingsBase> _settingsList = new List<SettingsBase>();
+
     [Header("General Settings")]
-    public GeneralFileSizeSettings _generalFileSizeSettings;
+    public GeneralFileSizeSettings _generalFileSizeSettings = new GeneralFileSizeSettings();
 
     [Header("Texture2D Settings")]
-    public TextureIsPowerOfTwoSettings _textureIsPowerOfTwoSettings;
-    public TextureSizeSettings _textureSizeSettings;
+    public TextureIsPowerOfTwoSettings _textureIsPowerOfTwoSettings = new TextureIsPowerOfTwoSettings();
+    public TextureSizeSettings _textureSizeSettings = new TextureSizeSettings();
 
     [Header("AudioClip Settings")]
     public int example1 = default;
@@ -42,6 +45,11 @@ public class so_AssetValidationSettings : ScriptableObject
             {LogLevel.WARNING, _warning},
             {LogLevel.CRITICAL, _critical}
         };
+
+        // Add derived classes to list of base class.
+        _settingsList.Add(_generalFileSizeSettings);
+        _settingsList.Add(_textureIsPowerOfTwoSettings);
+        _settingsList.Add(_textureSizeSettings);
     }
 
     private void OnValidate()

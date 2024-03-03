@@ -46,6 +46,7 @@ namespace AssetValidator
         {
             public LogLevel _logLevel;
             [HideInInspector] public bool _result;
+            [HideInInspector] public UIVisuals _uiVisuals = new UIVisuals();
         }
 
         /// <summary>
@@ -53,13 +54,10 @@ namespace AssetValidator
         /// </summary>
         /// <seealso cref="ValidationMethods.ValidateGeneral.IsFileSizeValid"/>
         [System.Serializable]
-        public struct GeneralFileSizeSettings
+        public class GeneralFileSizeSettings : SettingsBase
         {
             public SizeUnit _sizeUnit;
             public long _fileSize;
-
-            public LogLevel _logLevel;
-            [HideInInspector] public bool _result;
         }
 
         /// <summary>
@@ -67,23 +65,16 @@ namespace AssetValidator
         /// </summary>
         /// <seealso cref="ValidationMethods.ValidateTexture2D.IsTexturePowerOfTwo"/>
         [System.Serializable]
-        public struct TextureIsPowerOfTwoSettings
-        {
-            public LogLevel _logLevel;
-            [HideInInspector] public bool _result;
-        }
+        public class TextureIsPowerOfTwoSettings : SettingsBase {}
 
         /// <summary>
         /// Struct defining settings used for validating Texture2D dimensions.
         /// </summary>
         /// <seealso cref="ValidationMethods.ValidateTexture2D.IsTextureDimensionsValid"/>
         [System.Serializable]
-        public struct TextureSizeSettings
+        public class TextureSizeSettings : SettingsBase
         {
             public Vector2 _textureSize;
-
-            public LogLevel _logLevel;
-            [HideInInspector] public bool _result;
         }
     }
 
