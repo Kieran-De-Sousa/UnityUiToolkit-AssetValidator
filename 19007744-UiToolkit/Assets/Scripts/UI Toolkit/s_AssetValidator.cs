@@ -16,6 +16,7 @@ using Object = UnityEngine.Object;
 using AssetValidator;
 using AssetValidator.Settings;
 using AssetValidator.ValidationMethods;
+using JetBrains.Annotations;
 
 public class s_AssetValidator : EditorWindow
 {
@@ -44,7 +45,7 @@ public class s_AssetValidator : EditorWindow
     private void OnEnable()
     {
         // Instantiate m_settings to avoid Null Reference errors
-        // m_settings = ScriptableObject.CreateInstance<so_AssetValidationSettings>();
+        m_settings = ScriptableObject.CreateInstance<so_AssetValidationSettings>();
 
         LinkUXML();
         LinkEvents();
@@ -155,18 +156,22 @@ public class s_AssetValidator : EditorWindow
                 // If the toggle was enabled...
                 if (setting._uiVisuals._toggle.value)
                 {
-                    if (setting._result)
+                    switch (setting._result)
                     {
-                        setting._uiVisuals._resultBox.style.backgroundColor = m_settings._passed;
-                        setting._uiVisuals._resultLabel.style.color = m_settings._passed;
-                    }
-
-                    else if (!setting._result)
-                    {
-                        if (m_settings._logColours.TryGetValue(setting._logLevel, out Color color))
+                        case true:
                         {
-                            setting._uiVisuals._resultBox.style.backgroundColor = color;
-                            setting._uiVisuals._resultLabel.style.color = color;
+                            setting._uiVisuals._resultBox.style.backgroundColor = m_settings._passed;
+                            setting._uiVisuals._resultLabel.style.color = m_settings._passed;
+                            break;
+                        }
+                        case false:
+                        {
+                            if (m_settings._logColours.TryGetValue(setting._logLevel, out Color color))
+                            {
+                                setting._uiVisuals._resultBox.style.backgroundColor = color;
+                                setting._uiVisuals._resultLabel.style.color = color;
+                            }
+                            break;
                         }
                     }
                 }
@@ -179,8 +184,11 @@ public class s_AssetValidator : EditorWindow
     /// </summary>
     /// <param name="settings">Scriptable Object <c>Asset Validator Settings</c></param>
     /// <seealso cref="m_settings"/>
-    private void OnObjectFieldValueChanged(so_AssetValidationSettings settings) =>
+    private void OnObjectFieldValueChanged(so_AssetValidationSettings settings)
+    {
         m_settings = settings;
+        AssignVisualElements();
+    }
 
 
     /// <summary>
@@ -250,6 +258,26 @@ public class s_AssetValidator : EditorWindow
 
         m_assetValidatorSettings = root.Q<ObjectField>(AssetValidator.Constants.Constants.OBJECT_SETTINGS);
 
+        AssignVisualElements(root);
+
+        m_validateButton = root.Q<Button>(AssetValidator.Constants.Constants.BUTTON_VALIDATE);
+
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="root"><c>Optional</c> | Root visual tree element.</param>
+    private void AssignVisualElements(VisualElement root = null)
+    {
+        // Null check and assign root if required.
+        if (root == null)
+        {
+            VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AssetValidator.Constants.Constants.PATH_UIDOCUMENT);
+            root = rootVisualElement;
+            visualTree.CloneTree(root);
+        }
+
         // Loops through list of settings available, and assigns Toggle and Visual Elements
         for (int i = 0; i < m_settings._settingsList.Count; ++i)
         {
@@ -257,13 +285,15 @@ public class s_AssetValidator : EditorWindow
             // further strings and the logic should automatically handle this.
             m_settings._settingsList[i]._uiVisuals =
                 AssignResultsVisualElements(root, AssetValidator.Constants.Constants.LIST_T_SETTINGS[i]);
-            Debug.Log($"{m_settings._settingsList[i]._uiVisuals}");
         }
-
-        m_validateButton = root.Q<Button>(AssetValidator.Constants.Constants.BUTTON_VALIDATE);
-
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="root"></param>
+    /// <param name="toggleName"></param>
+    /// <returns></returns>
     private UIVisuals AssignResultsVisualElements(VisualElement root, string toggleName)
     {
         UIVisuals uiVisuals = new UIVisuals();

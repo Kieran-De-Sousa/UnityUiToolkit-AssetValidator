@@ -35,7 +35,8 @@ public class so_AssetValidationSettings : ScriptableObject
     public AudioLengthSettings _audioLengthSettings = new AudioLengthSettings();
 
     [Header("Mesh Settings")]
-    public int example2 = default;
+    public MeshVertexCountSettings _meshVertexCountSettings = new MeshVertexCountSettings();
+    public MeshNormalsSettings _meshNormalsSettings = new MeshNormalsSettings();
 
     public so_AssetValidationSettings()
     {
@@ -55,6 +56,8 @@ public class so_AssetValidationSettings : ScriptableObject
             _textureIsPowerOfTwoSettings,
             _textureSizeSettings,
             _audioLengthSettings,
+            _meshVertexCountSettings,
+            _meshNormalsSettings
             // NOTE: Add additional settings here...
         });
     }

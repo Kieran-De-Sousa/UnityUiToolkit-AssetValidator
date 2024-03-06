@@ -105,6 +105,23 @@ namespace AssetValidator
             public float _audioClipLength;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <seealso cref="ValidationMethods.ValidateMesh.IsValidVertexCount"/>
+        [System.Serializable]
+        public class MeshVertexCountSettings : SettingsBase
+        {
+            public int _maxVertexCount;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <seealso cref="ValidationMethods.ValidateMesh.IsNormalsValid"/>
+        [System.Serializable]
+        public class MeshNormalsSettings : SettingsBase {}
+
         /// -------------------- ADD MORE SETTINGS HERE -------------------- ///
     }
 
@@ -156,7 +173,8 @@ namespace AssetValidator
 
             // Mesh Asset Validator Settings
             public const string FOLDOUT_MESH = "f_meshSettings";
-            public const string T_MESHEXAMPLE = "t_mesh";
+            public const string T_MESHVERTEX = "t_meshVertex";
+            public const string T_MESHNORMALS = "t_meshNormals";
 
             // Asset Validator button
             public const string BUTTON_VALIDATE = "b_validate";
@@ -214,7 +232,8 @@ namespace AssetValidator
                     T_POWEROFTWO,
                     T_TEXTURE_DIMENSIONS,
                     T_CLIPLENGTH,
-                    T_MESHEXAMPLE
+                    T_MESHVERTEX,
+                    T_MESHNORMALS,
                     // NOTE: Add additional constants here...
                 };
             }

@@ -102,29 +102,21 @@ namespace AssetValidator
             {
                 string assetName = asset.name;
 
-                Debug.Log($"Asset: {asset.name}");
-                Debug.Log($"Suffix: {suffixType}");
-                Debug.Log($"Suffix: {suffixString}");
-
                 switch (suffixType)
                 {
                     case AssetValidator.Settings.Suffix.Prefix:
                     {
-                        Debug.Log($"Result: {assetName.StartsWith(suffixString)}");
                         return assetName.StartsWith(suffixString);
                     }
                     case AssetValidator.Settings.Suffix.Postfix:
                     {
-                        Debug.Log($"Result: {assetName.EndsWith(suffixString)}");
                         return assetName.EndsWith(suffixString);
                     }
                     case AssetValidator.Settings.Suffix.None:
                     {
-                        Debug.Log($"Result: False");
                         return false;
                     }
                     default:
-                        Debug.Log($"Result: DEFAULT (False)");
                         return false;
                 }
             }
@@ -249,9 +241,74 @@ namespace AssetValidator
             {
                 Mesh mesh = (Mesh) obj;
 
+                if (settings._meshVertexCountSettings._uiVisuals._toggle.value)
+                {
+                    settings._meshVertexCountSettings._result =
+                        IsValidVertexCount(mesh, settings._meshVertexCountSettings._maxVertexCount);
+                }
+
+                if (settings._meshNormalsSettings._uiVisuals._toggle.value)
+                {
+                    settings._meshNormalsSettings._result = IsNormalsValid(mesh);
+                }
+
                 return settings;
             }
-            // TODO: Implementations.
+
+            /// <summary>
+            ///
+            /// </summary>
+            /// <param name="mesh"></param>
+            /// <param name="maxVertices"></param>
+            /// <returns></returns>
+            public static bool IsValidVertexCount(Mesh mesh, int maxVertices)
+            {
+                return mesh.vertexCount <= maxVertices;
+            }
+
+            /// <summary>
+            ///
+            /// </summary>
+            /// <param name="mesh"></param>
+            /// <returns></returns>
+            public static bool IsNormalsValid(Mesh mesh)
+            {
+                Vector3[] normals = mesh.normals;
+
+                // Check if any normals are zero - Return false if failed.
+                foreach (var normal in normals)
+                {
+                    if (normal == Vector3.zero)
+                    {
+                        return false;
+                    }
+                }
+
+                // Check if the normals are smoothly interpolated
+                for (var i = 0; i < mesh.subMeshCount; i++)
+                {
+                    var triangles = mesh.GetTriangles(i);
+                    for (var j = 0; j < triangles.Length; j += 3)
+                    {
+                        Vector3 v0 = mesh.vertices[triangles[j]];
+                        Vector3 v1 = mesh.vertices[triangles[j + 1]];
+                        Vector3 v2 = mesh.vertices[triangles[j + 2]];
+
+                        Vector3 faceNormal = Vector3.Cross(v1 - v0, v2 - v0).normalized;
+
+                        // Check if any of the mesh normals are not smoothly interpolated.
+                        if (Vector3.Dot(faceNormal, normals[triangles[j]]) < 0 ||
+                            Vector3.Dot(faceNormal, normals[triangles[j + 1]]) < 0 ||
+                            Vector3.Dot(faceNormal, normals[triangles[j + 2]]) < 0)
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                // Mesh is oriented and smooth.
+                return true;
+            }
         }
     }
 }
