@@ -217,6 +217,16 @@ namespace AssetValidator
                     settings._audioLengthSettings._result = IsAudioBelowLength(audioClip, settings._audioLengthSettings._audioClipLength);
                 }
 
+                if (settings._audioSampleRateSettings._uiVisuals._toggle.value)
+                {
+                    settings._audioSampleRateSettings._result = IsValidSampleRate(audioClip, settings._audioSampleRateSettings._sampleRates);
+                }
+
+                if (settings._audioBitRateSettings._uiVisuals._toggle.value)
+                {
+                    settings._audioBitRateSettings._result = IsAudioQualityValid(audioClip, settings._audioBitRateSettings._minBitrate);
+                }
+
                 return settings;
             }
 
@@ -225,10 +235,54 @@ namespace AssetValidator
             /// </summary>
             /// <param name="audioClip">AudioClip object to validate.</param>
             /// <param name="clipLength">Maximum audio clip length in seconds.</param>
-            /// <returns><c>true</c> if the audio clip is less than the length; otherwise, <c>false</c></returns>
+            /// <returns>
+            /// <c>true</c> if the audio clip is less than the length; otherwise, <c>false</c>
+            /// </returns>
             public static bool IsAudioBelowLength(AudioClip audioClip, float clipLength)
             {
                 return audioClip.length <= clipLength;
+            }
+
+            /// <summary>
+            /// Checks if the sample rate of the audio clip is valid.
+            /// </summary>
+            /// <param name="audioClip">AudioClip object to validate.</param>
+            /// <param name="validSampleRates"><c>Int</c> array of valid sample rates.</param>
+            /// <returns>
+            /// <c>true</c> if the sample rate of the audio clip is in the list of valid sample rates
+            /// </returns>
+            public static bool IsValidSampleRate(AudioClip audioClip, int[] validSampleRates)
+            {
+                // Get the sample rate of the audio clip
+                var sampleRate = audioClip.frequency;
+
+                // Check if the sample rate is in the list of valid sample rates
+                foreach (var rate in validSampleRates)
+                {
+                    if (sampleRate == rate)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            /// <summary>
+            /// Checks if the audio clip meets certain quality standards.
+            /// </summary>
+            /// <param name="audioClip">AudioClip object to validate.</param>
+            /// <param name="minBitrate">The minimum bitrate for the AudioClip.</param>
+            /// <returns>
+            /// <c>True</c> if the audio clip is above the minimum bitrate; otherwise, <c>false</c>.
+            /// </returns>
+            public static bool IsAudioQualityValid(AudioClip audioClip, int minBitrate)
+            {
+                // Get the bitrate of the audio clip.
+                int bitrate = audioClip.loadType == AudioClipLoadType.DecompressOnLoad ?
+                    (int)(audioClip.frequency * audioClip.channels * (audioClip.length / 8)) : audioClip.samples * audioClip.channels;
+
+                return bitrate >= minBitrate;
             }
         }
 

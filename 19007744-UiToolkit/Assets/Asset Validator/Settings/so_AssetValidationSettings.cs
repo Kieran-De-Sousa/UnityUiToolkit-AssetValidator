@@ -33,6 +33,8 @@ public class so_AssetValidationSettings : ScriptableObject
 
     [Header("AudioClip Settings")]
     public AudioLengthSettings _audioLengthSettings = new AudioLengthSettings();
+    public AudioBitRateSettings _audioBitRateSettings = new AudioBitRateSettings();
+    public AudioSampleRateSettings _audioSampleRateSettings = new AudioSampleRateSettings();
 
     [Header("Mesh Settings")]
     public MeshVertexCountSettings _meshVertexCountSettings = new MeshVertexCountSettings();
@@ -56,6 +58,8 @@ public class so_AssetValidationSettings : ScriptableObject
             _textureIsPowerOfTwoSettings,
             _textureSizeSettings,
             _audioLengthSettings,
+            _audioSampleRateSettings,
+            _audioBitRateSettings,
             _meshVertexCountSettings,
             _meshNormalsSettings
             // NOTE: Add additional settings here...

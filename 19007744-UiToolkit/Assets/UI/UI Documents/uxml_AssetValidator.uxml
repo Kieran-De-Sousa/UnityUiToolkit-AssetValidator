@@ -36,6 +36,14 @@
                     <ui:Label tabindex="-1" text="Result" parse-escape-sequences="true" display-tooltip-when-elided="true" name="l_result" />
                     <ui:VisualElement name="ve_result" style="flex-grow: 1; background-color: rgb(0, 0, 0);" />
                 </ui:Toggle>
+                <ui:Toggle label="Audio Sample Rate" name="t_sampleRate">
+                    <ui:Label tabindex="-1" text="Result" parse-escape-sequences="true" display-tooltip-when-elided="true" name="l_result" />
+                    <ui:VisualElement name="ve_result" style="flex-grow: 1; background-color: rgb(0, 0, 0);" />
+                </ui:Toggle>
+                <ui:Toggle label="Audio Bitrate" name="t_audioQuality">
+                    <ui:Label tabindex="-1" text="Result" parse-escape-sequences="true" display-tooltip-when-elided="true" name="l_result" />
+                    <ui:VisualElement name="ve_result" style="flex-grow: 1; background-color: rgb(0, 0, 0);" />
+                </ui:Toggle>
             </ui:Foldout>
             <ui:Foldout text="Mesh Settings" name="f_meshSettings">
                 <ui:Toggle label="Vertex Count" name="t_meshVertex">

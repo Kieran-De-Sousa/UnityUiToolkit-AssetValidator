@@ -16,7 +16,6 @@ using Object = UnityEngine.Object;
 using AssetValidator;
 using AssetValidator.Settings;
 using AssetValidator.ValidationMethods;
-using JetBrains.Annotations;
 
 public class s_AssetValidator : EditorWindow
 {
@@ -96,7 +95,9 @@ public class s_AssetValidator : EditorWindow
     /// Sets the preview image of the asset as the preview image in the <c>window</c> container.
     /// </summary>
     /// <param name="asset">Asset to have preview image shown.</param>
-    /// <returns><c>backgroundImage</c> for asset preview.</returns>
+    /// <returns>
+    /// <c>backgroundImage</c> for asset preview.
+    /// </returns>
     IEnumerator SetPreviewImage(Object asset)
     {
         Texture2D texture = AssetPreview.GetAssetPreview(asset);
@@ -158,12 +159,14 @@ public class s_AssetValidator : EditorWindow
                 {
                     switch (setting._result)
                     {
+                        // Asset validation passed!
                         case true:
                         {
                             setting._uiVisuals._resultBox.style.backgroundColor = m_settings._passed;
                             setting._uiVisuals._resultLabel.style.color = m_settings._passed;
                             break;
                         }
+                        // Asset validation failed!
                         case false:
                         {
                             if (m_settings._logColours.TryGetValue(setting._logLevel, out Color color))
@@ -182,12 +185,11 @@ public class s_AssetValidator : EditorWindow
     /// <summary>
     /// Bind object field changing event to <c>m_settings</c> member variable.
     /// </summary>
-    /// <param name="settings">Scriptable Object <c>Asset Validator Settings</c></param>
+    /// <param name="settings">Scriptable Object <c>Asset Validator Settings</c>.</param>
     /// <seealso cref="m_settings"/>
     private void OnObjectFieldValueChanged(so_AssetValidationSettings settings)
     {
-        m_settings = settings;
-        AssignVisualElements();
+        m_settings = ReassignVisualElements(m_settings, settings);
     }
 
 
@@ -220,6 +222,10 @@ public class s_AssetValidator : EditorWindow
         }
     }
 
+    /// <summary>
+    /// Update visual elements (Label and Result Box) associated with toggle based on toggle state.
+    /// </summary>
+    /// <param name="toggle">Toggle with visual elements to update.</param>
     private void UpdateResultsVisuals(Toggle toggle)
     {
         Label resultLabel = toggle.Q<Label>(AssetValidator.Constants.Constants.LABEL_RESULT);
@@ -258,26 +264,6 @@ public class s_AssetValidator : EditorWindow
 
         m_assetValidatorSettings = root.Q<ObjectField>(AssetValidator.Constants.Constants.OBJECT_SETTINGS);
 
-        AssignVisualElements(root);
-
-        m_validateButton = root.Q<Button>(AssetValidator.Constants.Constants.BUTTON_VALIDATE);
-
-    }
-
-    /// <summary>
-    ///
-    /// </summary>
-    /// <param name="root"><c>Optional</c> | Root visual tree element.</param>
-    private void AssignVisualElements(VisualElement root = null)
-    {
-        // Null check and assign root if required.
-        if (root == null)
-        {
-            VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AssetValidator.Constants.Constants.PATH_UIDOCUMENT);
-            root = rootVisualElement;
-            visualTree.CloneTree(root);
-        }
-
         // Loops through list of settings available, and assigns Toggle and Visual Elements
         for (int i = 0; i < m_settings._settingsList.Count; ++i)
         {
@@ -286,14 +272,38 @@ public class s_AssetValidator : EditorWindow
             m_settings._settingsList[i]._uiVisuals =
                 AssignResultsVisualElements(root, AssetValidator.Constants.Constants.LIST_T_SETTINGS[i]);
         }
+
+        m_validateButton = root.Q<Button>(AssetValidator.Constants.Constants.BUTTON_VALIDATE);
+
     }
 
     /// <summary>
-    ///
+    /// Reassigns visual elements from old settings to new settings.
     /// </summary>
-    /// <param name="root"></param>
-    /// <param name="toggleName"></param>
-    /// <returns></returns>
+    /// <param name="oldSettings">Old settings containing visual elements.</param>
+    /// <param name="newSettings">New settings that require visual elements to be set.</param>
+    private so_AssetValidationSettings ReassignVisualElements(so_AssetValidationSettings oldSettings, so_AssetValidationSettings newSettings)
+    {
+        // Make a copy of all the data
+        newSettings = oldSettings;
+
+        // Reassign the visual elements as these don't get passed through.
+        for (var i = 0; i < newSettings._settingsList.Count; ++i)
+        {
+            newSettings._settingsList[i]._uiVisuals = oldSettings._settingsList[i]._uiVisuals;
+        }
+
+        return newSettings;
+    }
+
+    /// <summary>
+    /// Assigns visual elements associated with toggle in UI toolkit.
+    /// </summary>
+    /// <param name="root">Root visual element containing UI elements.</param>
+    /// <param name="toggleName">Toggle UI element name.</param>
+    /// <returns>
+    /// Assigned visual elements from toggle.
+    /// </returns>
     private UIVisuals AssignResultsVisualElements(VisualElement root, string toggleName)
     {
         UIVisuals uiVisuals = new UIVisuals();
