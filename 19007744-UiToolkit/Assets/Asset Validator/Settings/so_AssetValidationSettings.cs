@@ -25,6 +25,7 @@ public class so_AssetValidationSettings : ScriptableObject
 
     [Header("General Settings")]
     public GeneralFileSizeSettings _generalFileSizeSettings = new GeneralFileSizeSettings();
+    public GeneralSuffixSettings _generalSuffixSettings = new GeneralSuffixSettings();
 
     [Header("Texture2D Settings")]
     public TextureIsPowerOfTwoSettings _textureIsPowerOfTwoSettings = new TextureIsPowerOfTwoSettings();
@@ -50,6 +51,7 @@ public class so_AssetValidationSettings : ScriptableObject
         _settingsList.AddRange(new List<SettingsBase>
         {
             _generalFileSizeSettings,
+            _generalSuffixSettings,
             _textureIsPowerOfTwoSettings,
             _textureSizeSettings,
             _audioLengthSettings,

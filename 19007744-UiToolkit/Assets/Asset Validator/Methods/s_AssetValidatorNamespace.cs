@@ -17,11 +17,11 @@ namespace AssetValidator
         /// </summary>
         public enum LogLevel : int
         {
-            None        = 0,
-            PASSED      = 1,
-            INFO        = 1 << 1,
-            WARNING     = 1 << 2,
-            CRITICAL    = 1 << 3,
+            INFO        = 1,
+            WARNING     = 1 << 1,
+            CRITICAL    = 1 << 2,
+            [Obsolete] // Note: This is the only way to hide a specific enum value from use in the inspector...
+            PASSED      = 1 << 3,
         };
 
         /// <summary>
@@ -39,13 +39,20 @@ namespace AssetValidator
             // Add more file size types as necessary...
         };
 
+        public enum Suffix : int
+        {
+            None = 0,
+            Prefix = 1,
+            Postfix = 2,
+        }
+
         /// <summary>
         /// Base class inherited by settings to pass Logging, Result, and UI data.
         /// </summary>
         public class SettingsBase
         {
-            public LogLevel _logLevel;
-            [HideInInspector] public bool _result;
+            public LogLevel _logLevel = LogLevel.INFO;
+            [HideInInspector] public bool _result = false;
             [HideInInspector] public UIVisuals _uiVisuals = new UIVisuals();
         }
 
@@ -58,6 +65,17 @@ namespace AssetValidator
         {
             public SizeUnit _sizeUnit;
             public long _fileSize;
+        }
+
+        /// <summary>
+        /// Class defining settings used for validating prefix / postfix of a files name.
+        /// </summary>
+        /// <seealso cref="ValidationMethods.ValidateGeneral.IsPrePostFixValid"/>
+        [System.Serializable]
+        public class GeneralSuffixSettings : SettingsBase
+        {
+            public Suffix _suffix;
+            public string _suffixString;
         }
 
         /// <summary>
@@ -125,6 +143,7 @@ namespace AssetValidator
             // General Asset Validator Settings
             public const string FOLDOUT_GENERAL = "f_generalSettings";
             public const string T_FILESIZE = "t_fileSize";
+            public const string T_PREPOSTFIX = "t_prePostFix";
 
             // Texture2D Asset Validator Settings
             public const string FOLDOUT_TEXTURE2D = "f_texture2DSettings";
@@ -170,7 +189,7 @@ namespace AssetValidator
             public static readonly Dictionary<LogLevel, Color> DEFAULT_LOGCOLOURS = new()
             {
                 {LogLevel.PASSED, Color.green},
-                {LogLevel.INFO, Color.gray},
+                {LogLevel.INFO, new Color(197, 197, 197, 255)},
                 {LogLevel.WARNING, Color.yellow},
                 {LogLevel.CRITICAL, Color.red}
             };
@@ -191,6 +210,7 @@ namespace AssetValidator
                 LIST_T_SETTINGS = new List<string>
                 {
                     T_FILESIZE,
+                    T_PREPOSTFIX,
                     T_POWEROFTWO,
                     T_TEXTURE_DIMENSIONS,
                     T_CLIPLENGTH,

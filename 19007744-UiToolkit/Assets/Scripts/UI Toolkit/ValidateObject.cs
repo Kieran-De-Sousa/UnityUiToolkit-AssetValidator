@@ -53,6 +53,12 @@ namespace AssetValidator
                         settings._generalFileSizeSettings._sizeUnit, settings._generalFileSizeSettings._fileSize);
                 }
 
+                if (settings._generalSuffixSettings._uiVisuals._toggle.value)
+                {
+                    settings._generalSuffixSettings._result = IsPrePostFixValid(obj,
+                        settings._generalSuffixSettings._suffix, settings._generalSuffixSettings._suffixString);
+                }
+
                 return settings;
             }
             /// <summary>
@@ -80,6 +86,47 @@ namespace AssetValidator
                 }
 
                 return fileSize <= maxSize;
+            }
+
+            /// <summary>
+            /// Validates if a file name has a prefix or postfix that matches the provided string.
+            /// </summary>
+            /// <param name="asset">Asset to be validated.</param>
+            /// <param name="suffixType">The type of suffix to validate (Prefix or Postfix).</param>
+            /// <param name="suffixString">The string to match as a suffix.</param>
+            /// <returns>
+            /// <c>true</c> if the asset name has a matching prefix or postfix; otherwise, <c>false</c>.
+            /// </returns>
+            public static bool IsPrePostFixValid(Object asset, AssetValidator.Settings.Suffix suffixType,
+                string suffixString)
+            {
+                string assetName = asset.name;
+
+                Debug.Log($"Asset: {asset.name}");
+                Debug.Log($"Suffix: {suffixType}");
+                Debug.Log($"Suffix: {suffixString}");
+
+                switch (suffixType)
+                {
+                    case AssetValidator.Settings.Suffix.Prefix:
+                    {
+                        Debug.Log($"Result: {assetName.StartsWith(suffixString)}");
+                        return assetName.StartsWith(suffixString);
+                    }
+                    case AssetValidator.Settings.Suffix.Postfix:
+                    {
+                        Debug.Log($"Result: {assetName.EndsWith(suffixString)}");
+                        return assetName.EndsWith(suffixString);
+                    }
+                    case AssetValidator.Settings.Suffix.None:
+                    {
+                        Debug.Log($"Result: False");
+                        return false;
+                    }
+                    default:
+                        Debug.Log($"Result: DEFAULT (False)");
+                        return false;
+                }
             }
 
             /// <summary>
@@ -135,14 +182,7 @@ namespace AssetValidator
             /// </returns>
             public static bool IsTexturePowerOfTwo(Texture2D texture)
             {
-                if (!IsPowerOfTwo(texture.width) || !IsPowerOfTwo(texture.height))
-                {
-                    Debug.LogError(texture.name + " is not a power of two!");
-                    return false;
-                }
-
-                Debug.Log(texture.name + " is a power of two!");
-                return true;
+                return IsPowerOfTwo(texture.width) && IsPowerOfTwo(texture.height);
             }
 
             /// <summary>

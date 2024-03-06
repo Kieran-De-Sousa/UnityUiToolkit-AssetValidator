@@ -13,20 +13,28 @@ MonoBehaviour:
   m_Name: AV Setting
   m_EditorClassIdentifier: 
   _passed: {r: 0, g: 1, b: 0, a: 1}
-  _info: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  _info: {r: 197, g: 197, b: 197, a: 255}
   _warning: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   _critical: {r: 1, g: 0, b: 0, a: 1}
   _generalFileSizeSettings:
-    _logLevel: 8
-    _result: 1
-    _sizeUnit: 4
-    _fileSize: 100
-  _textureIsPowerOfTwoSettings:
-    _logLevel: 0
-    _result: 1
-  _textureSizeSettings:
-    _logLevel: 8
+    _logLevel: 1
     _result: 0
-    _textureSize: {x: 200, y: 200}
-  example1: 0
+    _sizeUnit: 0
+    _fileSize: 0
+  _generalSuffixSettings:
+    _logLevel: 1
+    _result: 0
+    _suffix: 0
+    _suffixString: 
+  _textureIsPowerOfTwoSettings:
+    _logLevel: 1
+    _result: 0
+  _textureSizeSettings:
+    _logLevel: 1
+    _result: 0
+    _textureSize: {x: 0, y: 0}
+  _audioLengthSettings:
+    _logLevel: 1
+    _result: 0
+    _audioClipLength: 0
   example2: 0

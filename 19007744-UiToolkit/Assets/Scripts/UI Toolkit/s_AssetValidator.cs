@@ -44,7 +44,7 @@ public class s_AssetValidator : EditorWindow
     private void OnEnable()
     {
         // Instantiate m_settings to avoid Null Reference errors
-        m_settings = ScriptableObject.CreateInstance<so_AssetValidationSettings>();
+        // m_settings = ScriptableObject.CreateInstance<so_AssetValidationSettings>();
 
         LinkUXML();
         LinkEvents();
@@ -124,6 +124,12 @@ public class s_AssetValidator : EditorWindow
             return;
         }
 
+        if (m_settings._generalFileSizeSettings._uiVisuals._resultBox == null)
+        {
+            Debug.LogError("NO VISUAL ELEMENTS SET!");
+            return;
+        }
+
         so_AssetValidationSettings results = m_settings;
         foreach (Object asset in m_selectedAssets)
         {
@@ -161,7 +167,6 @@ public class s_AssetValidator : EditorWindow
                         {
                             setting._uiVisuals._resultBox.style.backgroundColor = color;
                             setting._uiVisuals._resultLabel.style.color = color;
-
                         }
                     }
                 }
@@ -225,7 +230,6 @@ public class s_AssetValidator : EditorWindow
         {
             resultBox.style.backgroundColor = toggle.value ?
                 AssetValidator.Constants.Constants.ENABLED_RESULT_BOX_COLOUR :
-                // DO ADDITIONAL STYLING HERE
                 AssetValidator.Constants.Constants.DISABLED_RESULT_BOX_COLOUR;
         }
     }
@@ -246,11 +250,6 @@ public class s_AssetValidator : EditorWindow
 
         m_assetValidatorSettings = root.Q<ObjectField>(AssetValidator.Constants.Constants.OBJECT_SETTINGS);
 
-        /*for (int i = 0; i < AssetValidator.Constants.Constants.LIST_T_SETTINGS.Count; ++i)
-        {
-            Debug.Log($"{AssetValidator.Constants.Constants.LIST_T_SETTINGS[i]}");
-        }*/
-
         // Loops through list of settings available, and assigns Toggle and Visual Elements
         for (int i = 0; i < m_settings._settingsList.Count; ++i)
         {
@@ -258,6 +257,7 @@ public class s_AssetValidator : EditorWindow
             // further strings and the logic should automatically handle this.
             m_settings._settingsList[i]._uiVisuals =
                 AssignResultsVisualElements(root, AssetValidator.Constants.Constants.LIST_T_SETTINGS[i]);
+            Debug.Log($"{m_settings._settingsList[i]._uiVisuals}");
         }
 
         m_validateButton = root.Q<Button>(AssetValidator.Constants.Constants.BUTTON_VALIDATE);
@@ -266,7 +266,7 @@ public class s_AssetValidator : EditorWindow
 
     private UIVisuals AssignResultsVisualElements(VisualElement root, string toggleName)
     {
-        UIVisuals uiVisuals = default;
+        UIVisuals uiVisuals = new UIVisuals();
 
         uiVisuals._toggle = root.Q<Toggle>(toggleName);
         uiVisuals._resultLabel = uiVisuals._toggle.Q<Label>(AssetValidator.Constants.Constants.LABEL_RESULT);

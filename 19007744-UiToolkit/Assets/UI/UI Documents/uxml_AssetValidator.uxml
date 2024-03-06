@@ -16,6 +16,10 @@
                     <ui:Label tabindex="-1" text="Result" parse-escape-sequences="true" display-tooltip-when-elided="true" name="l_result" />
                     <ui:VisualElement name="ve_result" style="flex-grow: 1; background-color: rgb(0, 0, 0);" />
                 </ui:Toggle>
+                <ui:Toggle label="Prefix / Postfix" name="t_prePostFix" value="false" focusable="true">
+                    <ui:Label tabindex="-1" text="Result" parse-escape-sequences="true" display-tooltip-when-elided="true" name="l_result" />
+                    <ui:VisualElement name="ve_result" style="flex-grow: 1; background-color: rgb(0, 0, 0);" />
+                </ui:Toggle>
             </ui:Foldout>
             <ui:Foldout text="Texture2D Settings" name="f_texture2DSettings" value="true">
                 <ui:Toggle label="Is Power of Two?" name="t_powerOfTwo">
