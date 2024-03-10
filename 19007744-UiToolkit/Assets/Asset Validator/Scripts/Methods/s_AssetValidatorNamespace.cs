@@ -44,18 +44,22 @@ namespace AssetValidator
             // Add more file size types as necessary...
         };
 
+        /// <summary>
+        /// Defined types of suffix to check an asset for.
+        /// </summary>
         public enum Suffix : int
         {
             None = 0,
-            Prefix = 1,
-            Postfix = 2,
-        }
+            Prefix = 1,     // The start of an asset name.
+            Postfix = 2,    // The end of an asset name.
+        };
 
         /// <summary>
         /// Base class inherited by settings to pass Logging, Result, and UI data.
         /// </summary>
         public class SettingsBase
         {
+            [Tooltip("The type of log that will be outputted for a failed asset validation.")]
             public LogLevel _logLevel = LogLevel.INFO;
             [HideInInspector] public bool _result = false;
             [HideInInspector] public UIVisuals _uiVisuals = new UIVisuals();
@@ -68,7 +72,9 @@ namespace AssetValidator
         [System.Serializable]
         public class GeneralFileSizeSettings : SettingsBase
         {
+            [Tooltip("The unit used to measure the file size of the asset.")]
             public SizeUnit _sizeUnit;
+            [Tooltip("The size of the file in the unit of measurement.")]
             public long _fileSize;
         }
 
@@ -79,7 +85,11 @@ namespace AssetValidator
         [System.Serializable]
         public class GeneralSuffixSettings : SettingsBase
         {
+            [Tooltip("The type to check where the string is: " +
+                     "Prefix will check the beginning of the asset name. " +
+                     "Postfix will check the end of the asset name.")]
             public Suffix _suffix;
+            [Tooltip("The string to check as the prefix / postfix.")]
             public string _suffixString;
         }
 
@@ -97,6 +107,7 @@ namespace AssetValidator
         [System.Serializable]
         public class TextureSizeSettings : SettingsBase
         {
+            [Tooltip("The maximum width and height in pixels for a Texture.")]
             public Vector2 _textureSize;
         }
 
@@ -107,41 +118,45 @@ namespace AssetValidator
         [System.Serializable]
         public class AudioLengthSettings : SettingsBase
         {
+            [Tooltip("The maximum length of time in seconds an AudioClip can be.")]
             public float _audioClipLength;
         }
 
         /// <summary>
-        ///
+        /// Class defining settings used for validating the minimum bitrate of an AudioClip.
         /// </summary>
-        /// <seealso cref="ValidationMethods.ValidateAudioClip."/>
+        /// <seealso cref="ValidationMethods.ValidateAudioClip.IsAudioQualityValid"/>
         [System.Serializable]
         public class AudioBitRateSettings : SettingsBase
         {
+            [Tooltip("The minimum bitrate allowed for an AudioClip, measured in KBPS.")]
             public int _minBitrate;
         }
 
         /// <summary>
-        ///
+        /// Class defining settings used for validating the sample rates of an AudioClip.
         /// </summary>
         /// <seealso cref="ValidationMethods.ValidateAudioClip.IsValidSampleRate"/>
         [System.Serializable]
         public class AudioSampleRateSettings : SettingsBase
         {
-            public int[] _sampleRates;
+            [Tooltip("A list of different sample rates that are valid for an AudioClip, measured in Hz.")]
+            public long[] _sampleRates;
         }
 
         /// <summary>
-        ///
+        /// Class defining settings used for validating the maximum number of vertices in a Mesh.
         /// </summary>
         /// <seealso cref="ValidationMethods.ValidateMesh.IsValidVertexCount"/>
         [System.Serializable]
         public class MeshVertexCountSettings : SettingsBase
         {
+            [Tooltip("The maximum number of vertices a Mesh can have.")]
             public int _maxVertexCount;
         }
 
         /// <summary>
-        ///
+        /// Class defining settings used for validating if a Mesh's normals are oriented and smooth.
         /// </summary>
         /// <seealso cref="ValidationMethods.ValidateMesh.IsNormalsValid"/>
         [System.Serializable]
@@ -161,7 +176,7 @@ namespace AssetValidator
             /// <summary>
             /// String constants of Asset Validator
             /// </summary>
-            ///
+
             // Tool window
             public const string MENU_ITEM = "Tools/Asset Validator/Asset Validator";
             public const string WINDOW_NAME = "Asset Validator";
@@ -228,6 +243,7 @@ namespace AssetValidator
                 //TODO: Add more types as necessary.
             };
 
+            // Dictionary mapping asset types to their respective validation methods.
             public static readonly Dictionary<Type, Func<Object, so_AssetValidationSettings, so_AssetValidationSettings>> TYPEMETHODASSIGNMENT = new()
             {
                 { typeof(Texture2D), AssetValidator.ValidationMethods.ValidateTexture2D.ValidationTexture2D },
@@ -257,6 +273,7 @@ namespace AssetValidator
 
             static Constants()
             {
+                // Instantiate the list values here to link to other systems.
                 LIST_T_SETTINGS = new List<string>
                 {
                     T_FILESIZE,

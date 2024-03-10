@@ -155,6 +155,7 @@ public class s_AssetValidator : EditorWindow
             }
         }
 
+        // Update UI to show results ------------------------------------
         m_settings = results;
 
         // Error check for null
@@ -188,6 +189,8 @@ public class s_AssetValidator : EditorWindow
                 }
             }
         }
+        // Update UI to show results ------------------------------------
+
     }
 
     /// <summary>

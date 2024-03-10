@@ -16,9 +16,13 @@ using AssetValidator.Settings;
 public class so_AssetValidationSettings : ScriptableObject
 {
     [Header("Logging Settings")]
+    [Tooltip("The colour to display if an asset passes a validation check.")]
     public Color _passed = AssetValidator.Constants.Constants.DEFAULT_LOGCOLOURS[LogLevel.PASSED];
+    [Tooltip("The colour to display if an asset fails a validation check and the check is logged as INFO.")]
     public Color _info = AssetValidator.Constants.Constants.DEFAULT_LOGCOLOURS[LogLevel.INFO];
+    [Tooltip("The colour to display if an asset fails a validation check and the check is logged as WARNING.")]
     public Color _warning = AssetValidator.Constants.Constants.DEFAULT_LOGCOLOURS[LogLevel.WARNING];
+    [Tooltip("The colour to display if an asset fails a validation check and the check is logged as CRITICAL.")]
     public Color _critical = AssetValidator.Constants.Constants.DEFAULT_LOGCOLOURS[LogLevel.CRITICAL];
 
     public Dictionary<LogLevel, Color> _logColours;

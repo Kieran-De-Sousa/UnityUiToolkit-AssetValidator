@@ -253,7 +253,7 @@ namespace AssetValidator
             /// <returns>
             /// <c>true</c> if the sample rate of the audio clip is in the list of valid sample rates
             /// </returns>
-            public static bool IsValidSampleRate(AudioClip audioClip, int[] validSampleRates)
+            public static bool IsValidSampleRate(AudioClip audioClip, long[] validSampleRates)
             {
                 // Get the sample rate of the audio clip
                 var sampleRate = audioClip.frequency;
@@ -283,7 +283,7 @@ namespace AssetValidator
             /// <param name="audioClip">AudioClip object to validate.</param>
             /// <param name="minBitrate">The minimum bitrate for the AudioClip.</param>
             /// <returns>
-            /// <c>True</c> if the audio clip is above the minimum bitrate; otherwise, <c>false</c>.
+            /// <c>true</c> if the AudioClip is above the minimum bitrate; otherwise, <c>false</c>.
             /// </returns>
             public static bool IsAudioQualityValid(AudioClip audioClip, int minBitrate)
             {
@@ -319,21 +319,25 @@ namespace AssetValidator
             }
 
             /// <summary>
-            ///
+            /// Checks if the Mesh object has a vertex count less than or equal to the maximum allowed vertices.
             /// </summary>
-            /// <param name="mesh"></param>
-            /// <param name="maxVertices"></param>
-            /// <returns></returns>
+            /// <param name="mesh">Mesh object to validate.</param>
+            /// <param name="maxVertices">The maximum vertex count the Mesh can have.</param>
+            /// <returns>
+            /// <c>true</c> if the Mesh has less than or equal to the maximum specified vertex count; otherwise, <c>false</c>.
+            /// </returns>
             public static bool IsValidVertexCount(Mesh mesh, int maxVertices)
             {
                 return mesh.vertexCount <= maxVertices;
             }
 
             /// <summary>
-            ///
+            /// Checks if the Mesh object has smooth and oriented normals.
             /// </summary>
-            /// <param name="mesh"></param>
-            /// <returns></returns>
+            /// <param name="mesh">Mesh object to validate.</param>
+            /// <returns>
+            /// <c>true</c> if the Mesh is smooth and oriented; otherwise, <c>false</c>.
+            /// </returns>
             public static bool IsNormalsValid(Mesh mesh)
             {
                 Vector3[] normals = mesh.normals;
