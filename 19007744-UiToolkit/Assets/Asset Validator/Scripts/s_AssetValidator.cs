@@ -120,6 +120,7 @@ public class s_AssetValidator : EditorWindow
     /// </summary>
     private void ValidateSelection()
     {
+        // Error Checking --------------------------
         if (m_settings == null)
         {
             Debug.LogError("NO ASSET VALIDATOR SETTINGS HAVE BEEN SET!");
@@ -131,6 +132,13 @@ public class s_AssetValidator : EditorWindow
             Debug.LogError("NO VISUAL ELEMENTS SET!");
             return;
         }
+
+        if (m_selectedAssets.Count == 0)
+        {
+            Debug.LogError("NO ASSETS SELECTED FOR VALIDATION!");
+            return;
+        }
+        // Error Checking --------------------------
 
         so_AssetValidationSettings results = m_settings;
         foreach (Object asset in m_selectedAssets)
@@ -284,9 +292,6 @@ public class s_AssetValidator : EditorWindow
     /// <param name="newSettings">New settings that require visual elements to be set.</param>
     private so_AssetValidationSettings ReassignVisualElements(so_AssetValidationSettings oldSettings, so_AssetValidationSettings newSettings)
     {
-        // Make a copy of all the data
-        newSettings = oldSettings;
-
         // Reassign the visual elements as these don't get passed through.
         for (var i = 0; i < newSettings._settingsList.Count; ++i)
         {

@@ -1,8 +1,10 @@
+// Base
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
+// Unity
 using UnityEditor;
 using UnityEngine;
 
@@ -256,6 +258,11 @@ namespace AssetValidator
                 // Get the sample rate of the audio clip
                 var sampleRate = audioClip.frequency;
 
+                if (validSampleRates == null)
+                {
+                    Debug.LogError("VALID SAMPLE RATES LIST IS EMPTY, PLEASE ADD VALID SAMPLE RATES TO THE AV SETTING!");
+                    return false;
+                }
                 // Check if the sample rate is in the list of valid sample rates
                 foreach (var rate in validSampleRates)
                 {
@@ -264,6 +271,8 @@ namespace AssetValidator
                         return true;
                     }
                 }
+
+
 
                 return false;
             }

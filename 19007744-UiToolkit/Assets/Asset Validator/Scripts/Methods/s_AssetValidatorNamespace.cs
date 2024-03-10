@@ -1,8 +1,13 @@
+// Base
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using AssetValidator.Settings;
+
+// Unity
 using UnityEngine;
+
+// Asset Validator
+using AssetValidator.Settings;
 
 using Object = UnityEngine.Object;
 
@@ -20,7 +25,7 @@ namespace AssetValidator
             INFO        = 1,
             WARNING     = 1 << 1,
             CRITICAL    = 1 << 2,
-            [Obsolete] // Note: This is the only way to hide a specific enum value from use in the inspector...
+            [Obsolete] // Note: This is the only way to hide a specific enum value from use in the inspector, please ignore any warning in Unity...
             PASSED      = 1 << 3,
         };
 
@@ -96,7 +101,7 @@ namespace AssetValidator
         }
 
         /// <summary>
-        ///
+        /// Class defining settings used for validating the length of an AudioClip.
         /// </summary>
         /// <seealso cref="ValidationMethods.ValidateAudioClip.IsAudioBelowLength"/>
         [System.Serializable]
@@ -156,12 +161,17 @@ namespace AssetValidator
             /// <summary>
             /// String constants of Asset Validator
             /// </summary>
+            ///
             // Tool window
             public const string MENU_ITEM = "Tools/Asset Validator/Asset Validator";
             public const string WINDOW_NAME = "Asset Validator";
 
+            // AV Settings (Scriptable Object)
+            public const string FILE_NAME = "AV Setting";
+            public const string MENU_NAME = "ScriptableObjects/Asset Validator Settings";
+
             // Paths
-            public const string PATH_UIDOCUMENT = "Assets/UI/UI Documents/uxml_AssetValidator.uxml";
+            public const string PATH_UIDOCUMENT = "Assets/Asset Validator/UI/UI Documents/uxml_AssetValidator.uxml";
 
             // Asset selection
             public const string VE_ASSETCONTAINER = "v_selectedAsset";

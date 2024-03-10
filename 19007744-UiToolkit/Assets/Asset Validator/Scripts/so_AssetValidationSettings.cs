@@ -1,15 +1,18 @@
+// Base
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
+// Unity
 using UnityEngine;
 using UnityEngine.Serialization;
 
+// Asset Validator namespace
 using AssetValidator.Constants;
 using AssetValidator.Settings;
 
-[CreateAssetMenu(fileName = "AV Setting", menuName = "ScriptableObjects/Asset Validator Settings", order = 1)]
+[CreateAssetMenu(fileName = Constants.FILE_NAME, menuName = Constants.MENU_NAME, order = 1)]
 public class so_AssetValidationSettings : ScriptableObject
 {
     [Header("Logging Settings")]

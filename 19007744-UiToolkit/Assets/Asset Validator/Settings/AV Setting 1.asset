@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09bbd056a0bfff34da1cd1ee6d8e37fb, type: 3}
+  m_Name: AV Setting 1
+  m_EditorClassIdentifier: 
+  _passed: {r: 0, g: 1, b: 0, a: 1}
+  _info: {r: 197, g: 197, b: 197, a: 255}
+  _warning: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  _critical: {r: 1, g: 0, b: 0, a: 1}
+  _generalFileSizeSettings:
+    _logLevel: 1
+    _result: 0
+    _sizeUnit: 0
+    _fileSize: 0
+  _generalSuffixSettings:
+    _logLevel: 1
+    _result: 0
+    _suffix: 0
+    _suffixString: 
+  _textureIsPowerOfTwoSettings:
+    _logLevel: 1
+    _result: 0
+  _textureSizeSettings:
+    _logLevel: 1
+    _result: 0
+    _textureSize: {x: 0, y: 0}
+  _audioLengthSettings:
+    _logLevel: 1
+    _result: 0
+    _audioClipLength: 0
+  _audioBitRateSettings:
+    _logLevel: 1
+    _result: 0
+    _minBitrate: 0
+  _audioSampleRateSettings:
+    _logLevel: 1
+    _result: 0
+    _sampleRates: 
+  _meshVertexCountSettings:
+    _logLevel: 1
+    _result: 0
+    _maxVertexCount: 0
+  _meshNormalsSettings:
+    _logLevel: 1
+    _result: 0
