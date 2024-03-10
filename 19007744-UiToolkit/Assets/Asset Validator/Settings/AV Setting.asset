@@ -28,7 +28,7 @@ MonoBehaviour:
     _suffixString: 
   _textureIsPowerOfTwoSettings:
     _logLevel: 1
-    _result: 0
+    _result: 1
   _textureSizeSettings:
     _logLevel: 1
     _result: 0
@@ -37,4 +37,18 @@ MonoBehaviour:
     _logLevel: 1
     _result: 0
     _audioClipLength: 0
-  example2: 0
+  _audioBitRateSettings:
+    _logLevel: 1
+    _result: 0
+    _minBitrate: 0
+  _audioSampleRateSettings:
+    _logLevel: 1
+    _result: 0
+    _sampleRates: 
+  _meshVertexCountSettings:
+    _logLevel: 1
+    _result: 0
+    _maxVertexCount: 0
+  _meshNormalsSettings:
+    _logLevel: 1
+    _result: 0
