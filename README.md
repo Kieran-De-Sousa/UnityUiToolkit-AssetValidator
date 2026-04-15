@@ -20,4 +20,4 @@ Validation methods can be enabled or disabled when validating an object through 
 <img width="366" height="660" alt="Unity Asset Validator01" src="https://github.com/user-attachments/assets/29238afe-018a-41d2-a1c5-c28bb58ae55a" />
 
 ## Essay
-![Advanced Technologies: Can You Create An Effective Asset Validator With UI Toolkit?](https://drive.proton.me/urls/8KT32VA1XR#NJFOMNIylKJN)
+[Advanced Technologies: Can You Create An Effective Asset Validator With UI Toolkit?](https://drive.proton.me/urls/8KT32VA1XR#NJFOMNIylKJN)
